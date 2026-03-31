@@ -26,12 +26,14 @@
         const archivedTasksQuadrant2 = JSON.parse(localStorage.getItem('archivedTasksQuadrant2')) || [];
         const archivedTasksQuadrant3 = JSON.parse(localStorage.getItem('archivedTasksQuadrant3')) || [];
         const archivedTasksQuadrant4 = JSON.parse(localStorage.getItem('archivedTasksQuadrant4')) || [];
+        const routineTasks = JSON.parse(localStorage.getItem('routineTasks')) || [];
 
     // Other
         const views = [
             [allTasksQuadrant1, allTasksQuadrant2, allTasksQuadrant3, allTasksQuadrant4],
             [todaysTasks],
-            [archivedTasksQuadrant1, archivedTasksQuadrant2, archivedTasksQuadrant3, archivedTasksQuadrant4]
+            [archivedTasksQuadrant1, archivedTasksQuadrant2, archivedTasksQuadrant3, archivedTasksQuadrant4],
+            [routineTasks]
         ]
         const settings = JSON.parse(localStorage.getItem('settings')) || [0, false];
         // settings[0]: views
@@ -139,6 +141,9 @@
                                                         }
                                                         else if (settings[0] == 1) {
                                                             todaysTasks.push(validTask);
+                                                        }
+                                                        else if (settings[0] == 3) {
+                                                            routineTasks.push(validTask);
                                                         }
 
                                                         saveTasks();
@@ -277,7 +282,7 @@
                             //     listItem.appendChild(divImpact);
                             // }
                         // Highlight impactful tasks in Today's view (using numbering)
-                            if (settings[0] == 1) {
+                            if (settings[0] == 1 || settings[0] == 3) {
                                 const divQuadrant = document.createElement('div');
                                 if (splitTask[1] != "") {
                                     if (splitTask[3] == "/") {
@@ -304,7 +309,7 @@
                             // }
 
                         // Create "Deadline" div
-                            if (splitTask[1] != "" || settings[0] == 1) {
+                            if (splitTask[1] != "" || settings[0] == 1 || settings[0] == 3) {
                                 const divDeadline = document.createElement('div');
                                 divDeadline.textContent = splitTask[1];
                                 divDeadline.className = 'col-info';
@@ -338,6 +343,10 @@
                                     todaysTasks.push(i[index]);
                                     i.splice(index, 1);
                                 }
+                                else if (settings[0] == 3) {
+                                    todaysTasks.push(routineTasks[index]);
+                                    routineTasks.splice(index, 1);
+                                }
                                 else {
                                     let i = splitTask[1] != "" && splitTask[3] == "/" ? allTasksQuadrant1 : splitTask[1] == "" && splitTask[3] == "/" ? allTasksQuadrant2 : splitTask[1] != "" && splitTask[3] == "" ? allTasksQuadrant3 : allTasksQuadrant4;
                                     i.push(todaysTasks[index]);
@@ -347,6 +356,27 @@
                                 displayTasks();
                             })
                             divUpdate.appendChild(todayButton);
+
+                        // Create "Move to/from routine" button
+                            if (settings[0] != 3) { 
+                                const routineButton = document.createElement('button');
+                                routineButton.textContent = 'R';
+                                routineButton.className = 'col-update-buttons';
+                                routineButton.addEventListener('click', () => {
+                                    if (settings[0] == 0 || settings[0] == 2) {
+                                        let i = list == quadrant1 ? views[settings[0]][0] : list == quadrant2 ? views[settings[0]][1] : list == quadrant3 ? views[settings[0]][2] : views[settings[0]][3];
+                                        routineTasks.push(i[index]);
+                                        i.splice(index, 1);
+                                    }
+                                    else if (settings[0] == 1) {
+                                        routineTasks.push(todaysTasks[index]);
+                                        todaysTasks.splice(index, 1);
+                                    }
+                                    saveTasks();
+                                    displayTasks();
+                                })
+                                divUpdate.appendChild(routineButton);
+                            }
 
                         // Create "Archive/Unarchive" button
                             const archiveButton = document.createElement('button');
@@ -369,6 +399,11 @@
                                     j.push(i[index]);
                                     i.splice(index, 1);
                                 }
+                                else if (settings[0] == 3) {
+                                    let i = splitTask[1] != "" && splitTask[3] == "/" ? archivedTasksQuadrant1 : splitTask[1] == "" && splitTask[3] == "/" ? archivedTasksQuadrant2 : splitTask[1] != "" && splitTask[3] == "" ? archivedTasksQuadrant3 : archivedTasksQuadrant4;
+                                    i.push(routineTasks[index]);
+                                    routineTasks.splice(index, 1);
+                                }
                                 saveTasks();
                                 displayTasks();
                             })
@@ -384,7 +419,7 @@
                                     userInput.focus;
                                 }
                                 else {
-                                    let i = list == quadrant1 ? views[settings[0]][0] : list == quadrant2 ? views[settings[0]][1] : list == quadrant3 ? views[settings[0]][2] : list == quadrant4 ? views[settings[0]][3] : todaysTasks;
+                                    let i = list == quadrant1 ? views[settings[0]][0] : list == quadrant2 ? views[settings[0]][1] : list == quadrant3 ? views[settings[0]][2] : list == quadrant4 ? views[settings[0]][3] : settings[0] == 1 ? todaysTasks : routineTasks;
                                     // Split
                                         let j = i[index].split("|");
                                     // Concatinate
@@ -406,7 +441,7 @@
                             deleteButton.textContent = 'X';
                             deleteButton.className = 'col-update-buttons';
                             deleteButton.addEventListener("click", () => {
-                                let i = list == quadrant1 ? views[settings[0]][0] : list == quadrant2 ? views[settings[0]][1] : list == quadrant3 ? views[settings[0]][2] : list == quadrant4 ? views[settings[0]][3] : todaysTasks;
+                                let i = list == quadrant1 ? views[settings[0]][0] : list == quadrant2 ? views[settings[0]][1] : list == quadrant3 ? views[settings[0]][2] : list == quadrant4 ? views[settings[0]][3] : settings[0] == 1 ? todaysTasks : routineTasks;
                                 i.splice(index, 1);
                                 saveTasks();
                                 displayTasks();
@@ -427,6 +462,7 @@
             localStorage.setItem('archivedTasksQuadrant2', JSON.stringify(archivedTasksQuadrant2));
             localStorage.setItem('archivedTasksQuadrant3', JSON.stringify(archivedTasksQuadrant3));
             localStorage.setItem('archivedTasksQuadrant4', JSON.stringify(archivedTasksQuadrant4));
+            localStorage.setItem('routineTasks', JSON.stringify(routineTasks));
         }
 
     // Drag & drop
@@ -452,7 +488,7 @@
                             list === quadrant2 ? 1 :
                             list === quadrant3 ? 2 :
                             list === quadrant4 ? 3 : -1;
-            } else if (settings[0] === 1) {
+            } else if (settings[0] === 1 || settings[0] === 3) {
                 listIndex = 0;
             }
             if (draggedItemIndex !== targetItemIndex && listIndex !== -1) {
@@ -477,6 +513,9 @@
             }
             else if (x == 2) {
                 switchView2('Arc', 'matrix', 2);
+            }
+            else if (x == 3) {
+                switchView2('Rou', 'singlelist', 3);
             }
         }
         function switchView2(a, b, c) {
@@ -762,12 +801,9 @@
                 if (e.target.id === 'userInput') {
                     switch (e.key) {
 
-                        case " ":
-                        case "Space":
-                            if (e.ctrlKey) {
-                                e.preventDefault();
-                                userInput.blur();
-                            }
+                        case "Escape":
+                            e.preventDefault();
+                            userInput.blur();
                             break;
 
                         case "Enter":
@@ -802,7 +838,7 @@
 
                         case "ArrowDown":
                             e.preventDefault();
-                            settings[0] = 2;
+                            settings[0] = 3;
                             switchView(settings[0]);
                             break;
 
@@ -813,14 +849,14 @@
                                 switchView(settings[0]);
                             }
                             else {
-                                settings[0] = 2;
+                                settings[0] = 3;
                                 switchView(settings[0]);
                             }
                             break;
 
                         case "ArrowRight":
                             e.preventDefault();
-                            if (settings[0] < 2) {
+                            if (settings[0] < 3) {
                                 settings[0]++;
                                 switchView(settings[0]);
                             }
@@ -830,8 +866,8 @@
                             }
                             break;
                             
-                        case "l":
-                        case "L":
+                        case "t":
+                        case "T":
                             e.preventDefault();
                             if (settings[1]) {
                                 lightMode();
