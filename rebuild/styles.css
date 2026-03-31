@@ -1,0 +1,185 @@
+/* {
+  margin: em;
+  border: em;
+  height: ;
+  width: ;
+  padding: em;
+
+  background-color: ;
+  color: ;
+  font-size: rem;
+} */
+
+* {
+  margin: 0;
+  padding: 0;
+
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+:root {
+
+/* Standards */
+  --std-border-size: 1px;
+
+  --navbar-buttons-dimension: 48px;
+  --navbar-buttons-margin: 8px;
+  --navbar-width: calc(var(--navbar-buttons-dimension) + (2 * var(--navbar-buttons-margin) + var(--std-border-size)));
+
+  --wbs-width: 35%;
+
+  --container-height: calc(100vh - (var(--inputBar-height) + var(--std-border-size)));
+
+  --gantt-width: 30%;
+
+  --matrix-calendar-height: 48px;
+  --quadrant-margin: 8px;
+  --quadrants-dimension: calc(50% - ((3 * (var(--quadrant-margin))) + (2 * var(--std-border-size))));
+
+  --inputBar-height: calc(var(--navbar-buttons-dimension) + var(--navbar-buttons-margin));
+
+/* Color Palette */
+  --color-primary:   hsl(0, 0%,   0%);
+  --color-secondary: hsl(0, 0%,  10%);
+  --color-tertiary:  hsl(0, 0%,   5%);
+  --color-font:      hsl(0, 0%, 100%);
+  --color-border:    hsl(0, 0%,  25%);
+}
+
+body {
+  overflow: hidden;
+
+  background-color: var(--color-primary);
+  color: var(--color-font);
+}
+
+/************************* NAVBAR *************************/
+
+#navbar {
+  border-right: var(--std-border-size) solid var(--color-border);
+  height: 100vh;
+  width: calc(var(--navbar-buttons-dimension) + (2 * var(--navbar-buttons-margin)));
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.navbar-buttons {
+  margin: var(--navbar-buttons-margin) var(--navbar-buttons-margin) 0;
+  border: none;
+  border-radius: 8px;
+  height: var(--navbar-buttons-dimension);
+  width: var(--navbar-buttons-dimension);
+
+  background-color: var(--color-primary);
+  color: var(--color-font);
+}
+
+.selected_button {
+  background-color: var(--color-secondary);
+}
+
+.navbar-buttons:hover:not(.selected_button) {
+  background-color: var(--color-tertiary);
+}
+
+/*********************** CONTAINER ************************/
+
+#container {
+  height: var(--container-height);
+  width: calc(100% - (var(--navbar-width)));
+
+  position: fixed;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.views {
+  height: 100%;
+
+  display: flex;
+  flex-flow: row wrap;
+  overflow: hidden;
+}
+
+/************************* CHART **************************/
+
+#wbs {
+  border-right: var(--std-border-size) solid var(--color-border);
+  width: var(--wbs-width);
+}
+
+#timeline {
+  width: calc(100% - (var(--wbs-width) + var(--std-border-size)));
+}
+
+/************************* MATRIX *************************/
+
+#matrix-calendar {
+  border-bottom: var(--std-border-size) solid var(--color-border);
+  width: 100%;
+
+  display: flex;
+  flex-flow: row wrap;
+  overflow: hidden;
+}
+
+#matrix-calendar > div {
+  height: var(--matrix-calendar-height);
+  width: calc(100% / 7);
+}
+
+.matrix-calendar-today {
+  background-color: var(--color-secondary);
+}
+
+#matrix {
+  height: calc(var(--container-height) - (2 * (var(--matrix-calendar-height) ) + var(--std-border-size)));
+  width: 100%;
+
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#quad1 {
+  margin: calc(2 * var(--quadrant-margin)) var(--quadrant-margin) var(--quadrant-margin) calc(2 * var(--quadrant-margin));
+}
+
+#quad2 {
+  margin: calc(2 * var(--quadrant-margin)) calc(2 * var(--quadrant-margin)) var(--quadrant-margin) var(--quadrant-margin);
+}
+
+#quad3 {
+  margin: var(--quadrant-margin) var(--quadrant-margin) calc(2 * var(--quadrant-margin)) calc(2 * var(--quadrant-margin));
+}
+
+#quad4 {
+  margin: var(--quadrant-margin) calc(2 * var(--quadrant-margin)) calc(2 * var(--quadrant-margin)) var(--quadrant-margin);
+}
+
+.quadrants {
+  margin: var(--quadrant-margin);
+  border: var(--std-border-size) solid var(--color-border);
+  border-radius: 16px;
+  height: var(--quadrants-dimension);
+  width: var(--quadrants-dimension);
+
+  background-color: var(--color-secondary);
+}
+
+/************************ INPUTBAR ************************/
+
+#inputBar {
+  border-top: var(--std-border-size) solid var(--color-border);
+  height: var(--inputBar-height);
+  width: calc(100% - var(--navbar-width));
+
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  overflow: hidden;
+}

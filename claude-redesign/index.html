@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>AchvIt</title>
+    <link rel="icon" type="image/svg+xml" href="images/logo.png" />
+    <meta name="author" content="Arnav Das" />
+    <meta name="description" content="A task management system" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta charset="UTF-8" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+
+    <!-- ══════════════════════════════════
+         DESKTOP SIDEBAR
+    ══════════════════════════════════ -->
+    <nav id="sidebar">
+      <div id="sidebar-logo">
+        <span class="logo-text">Achv</span><span class="logo-accent">It</span>
+      </div>
+      <div id="nav-views">
+        <button class="nav-btn" id="btn-Eis" onclick="switchView(0)">
+          <span class="nav-icon">⊞</span><span class="nav-label">Matrix</span>
+        </button>
+        <button class="nav-btn" id="btn-Tdy" onclick="switchView(1)">
+          <span class="nav-icon">◎</span><span class="nav-label">Today</span>
+        </button>
+        <button class="nav-btn" id="btn-Arc" onclick="switchView(2)">
+          <span class="nav-icon">⊡</span><span class="nav-label">Archive</span>
+        </button>
+        <button class="nav-btn" id="btn-Rou" onclick="switchView(3)">
+          <span class="nav-icon">↺</span><span class="nav-label">Routine</span>
+        </button>
+      </div>
+      <div id="nav-actions">
+        <button class="nav-btn" onclick="copyTasks()">
+          <span class="nav-icon">⧉</span><span class="nav-label">Copy</span>
+        </button>
+        <button class="nav-btn" id="darkModeBtn" onclick="setDarkMode()">
+          <span class="nav-icon">◑</span><span class="nav-label">Dark</span>
+        </button>
+        <button class="nav-btn" id="lightModeBtn" onclick="setLightMode()" style="display:none">
+          <span class="nav-icon">○</span><span class="nav-label">Light</span>
+        </button>
+        <button class="nav-btn" onclick="toggleHelp()" title="Keyboard shortcuts (?)">
+          <span class="nav-icon">?</span><span class="nav-label">Help</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ══════════════════════════════════
+         MAIN
+    ══════════════════════════════════ -->
+    <div id="main">
+
+      <header id="topbar">
+        <div id="view-title">
+          <span id="view-name">Matrix</span>
+          <span id="view-subtitle"></span>
+        </div>
+        <div id="topbar-right">
+          <div id="clock-row">
+            <span id="date"></span>
+            <span class="clock-sep">·</span>
+            <span id="day"></span>
+            <span class="clock-sep">·</span>
+            <span id="time"></span>
+          </div>
+          <button class="icon-btn" id="themeToggleMobile" onclick="toggleTheme()">◑</button>
+        </div>
+      </header>
+
+      <div id="content">
+
+        <!-- MATRIX VIEW -->
+        <div id="view-matrix" class="view">
+          <div id="matrix-wrap">
+            <div id="matrix-col-labels">
+              <div></div>
+              <div class="axis-label">Deadline</div>
+              <div class="axis-label">No Deadline</div>
+            </div>
+            <div id="matrix-body">
+              <div id="matrix-row-labels">
+                <div class="axis-label row-label">Long-term Impact</div>
+                <div class="axis-label row-label">No Long-term Impact</div>
+              </div>
+              <div id="matrix-grid">
+                <div class="quadrant" id="q1-wrap">
+                  <ul id="quadrant1" class="todolist"></ul>
+                </div>
+                <div class="quadrant" id="q2-wrap">
+                  <ul id="quadrant2" class="todolist"></ul>
+                </div>
+                <div class="quadrant" id="q3-wrap">
+                  <ul id="quadrant3" class="todolist"></ul>
+                </div>
+                <div class="quadrant" id="q4-wrap">
+                  <ul id="quadrant4" class="todolist"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SINGLELIST VIEW -->
+        <div id="view-singlelist" class="view" style="display:none">
+          <div id="list-header">
+            <div class="list-col-priority">Priority</div>
+            <div class="list-col-deadline">Deadline</div>
+            <div class="list-col-schedule">Schedule</div>
+            <div class="list-col-task">Task</div>
+          </div>
+          <div id="singlelist-scroll">
+            <ul id="singlelist" class="todolist"></ul>
+          </div>
+        </div>
+
+      </div><!-- /#content -->
+
+      <!-- ══════════════════════════════════
+           DESKTOP INPUT BAR
+           Segmented fields: Tab to move, Enter to submit
+      ══════════════════════════════════ -->
+      <footer id="inputbar">
+        <div id="desktop-form">
+
+          <div class="field-group" id="fg-task">
+            <label class="field-label" for="f-task">Task</label>
+            <input class="field-input" id="f-task" type="text"
+              placeholder="What needs to be done?"
+              autocomplete="off" />
+          </div>
+
+          <div class="field-sep"></div>
+
+          <div class="field-group field-group--md" id="fg-deadline">
+            <label class="field-label" for="f-deadline">Deadline</label>
+            <input class="field-input" id="f-deadline" type="text"
+              placeholder="Mar 20" autocomplete="off" />
+          </div>
+
+          <div class="field-sep"></div>
+
+          <div class="field-group field-group--md" id="fg-schedule">
+            <label class="field-label" for="f-schedule">Schedule</label>
+            <input class="field-input" id="f-schedule" type="text"
+              placeholder="Mon AM" autocomplete="off" />
+          </div>
+
+          <div class="field-sep"></div>
+
+          <div class="field-group field-group--xs" id="fg-impact">
+            <label class="field-label">Impact</label>
+            <button type="button" id="f-impact" class="impact-toggle" onclick="toggleImpact()">
+              <span id="impact-icon">○</span>
+              <span id="impact-label">None</span>
+            </button>
+          </div>
+
+          <button id="submit-btn" onclick="submitDesktopForm()">
+            Add <kbd>↵</kbd>
+          </button>
+
+        </div>
+      </footer>
+
+    </div><!-- /#main -->
+
+    <!-- ══════════════════════════════════
+         MOBILE BOTTOM NAV
+    ══════════════════════════════════ -->
+    <nav id="mobile-nav">
+      <button class="mob-btn" id="mob-btn-Eis" onclick="switchView(0)">
+        <span class="mob-icon">⊞</span><span class="mob-label">Matrix</span>
+      </button>
+      <button class="mob-btn" id="mob-btn-Tdy" onclick="switchView(1)">
+        <span class="mob-icon">◎</span><span class="mob-label">Today</span>
+      </button>
+      <div class="mob-fab-slot">
+        <button id="fab" onclick="openModal()">+</button>
+      </div>
+      <button class="mob-btn" id="mob-btn-Arc" onclick="switchView(2)">
+        <span class="mob-icon">⊡</span><span class="mob-label">Archive</span>
+      </button>
+      <button class="mob-btn" id="mob-btn-Rou" onclick="switchView(3)">
+        <span class="mob-icon">↺</span><span class="mob-label">Routine</span>
+      </button>
+    </nav>
+
+    <!-- ══════════════════════════════════
+         MOBILE ADD TASK MODAL
+    ══════════════════════════════════ -->
+    <div id="modal-overlay" onclick="closeModal()"></div>
+    <div id="modal-sheet">
+      <div class="sheet-handle"></div>
+      <div id="modal-header">
+        <span id="modal-title">Add Task</span>
+        <button id="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div id="modal-body">
+        <div class="modal-field">
+          <label class="modal-label" for="m-task">Task <span class="required">*</span></label>
+          <input class="modal-input" id="m-task" type="text" placeholder="What needs to be done?" />
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label class="modal-label" for="m-deadline">Deadline</label>
+            <input class="modal-input" id="m-deadline" type="text" placeholder="Mar 20" />
+          </div>
+          <div class="modal-field">
+            <label class="modal-label" for="m-schedule">Schedule</label>
+            <input class="modal-input" id="m-schedule" type="text" placeholder="Mon AM" />
+          </div>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Long-term Impact</label>
+          <div id="impact-selector">
+            <button type="button" class="impact-opt" id="impact-none" onclick="selectImpact(false)">
+              <span class="impact-opt-icon">○</span> No Impact
+            </button>
+            <button type="button" class="impact-opt" id="impact-yes" onclick="selectImpact(true)">
+              <span class="impact-opt-icon">◉</span> Long-term
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="modal-footer">
+        <button id="modal-cancel" onclick="closeModal()">Cancel</button>
+        <button id="modal-submit" onclick="submitMobileForm()">Add Task</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         TASK ACTION SHEET (mobile)
+    ══════════════════════════════════ -->
+    <div id="action-overlay" onclick="closeActionSheet()"></div>
+    <div id="action-sheet">
+      <div class="sheet-handle"></div>
+      <div id="action-task-label"></div>
+      <div id="action-buttons">
+        <button class="action-item" id="act-today">
+          <span class="act-icon">◎</span> Move to Today
+        </button>
+        <button class="action-item" id="act-routine">
+          <span class="act-icon">↺</span> Move to Routine
+        </button>
+        <button class="action-item" id="act-archive">
+          <span class="act-icon">⊡</span> Archive
+        </button>
+        <button class="action-item" id="act-edit">
+          <span class="act-icon">✎</span> Edit
+        </button>
+        <button class="action-item action-item--danger" id="act-delete">
+          <span class="act-icon">×</span> Delete
+        </button>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+
+
+    <!-- ══════════════════════════════════
+         KEYBOARD SHORTCUTS HELP
+    ══════════════════════════════════ -->
+    <div id="kb-help-overlay"></div>
+    <div id="kb-help">
+      <div id="kb-help-header">
+        <span>Keyboard Shortcuts</span>
+        <button onclick="document.getElementById('kb-help').classList.remove('open')">×</button>
+      </div>
+      <div id="kb-help-body">
+        <div class="kb-section">
+          <div class="kb-section-title">Navigation</div>
+          <div class="kb-row"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd><span>Switch view</span></div>
+          <div class="kb-row"><kbd>←</kbd><kbd>→</kbd><span>Previous / next view</span></div>
+          <div class="kb-row"><kbd>↑</kbd><kbd>↓</kbd><span>Navigate tasks</span></div>
+        </div>
+        <div class="kb-section">
+          <div class="kb-section-title">Input</div>
+          <div class="kb-row"><kbd>N</kbd><span>New task (focus input)</span></div>
+          <div class="kb-row"><kbd>Tab</kbd><span>Next field</span></div>
+          <div class="kb-row"><kbd>Space</kbd><span>Toggle impact (on Impact field)</span></div>
+          <div class="kb-row"><kbd>↵ Enter</kbd><span>Submit task</span></div>
+        </div>
+        <div class="kb-section">
+          <div class="kb-section-title">Task actions  <em>(focus a task first with ↑↓)</em></div>
+          <div class="kb-row"><kbd>E</kbd><span>Edit task</span></div>
+          <div class="kb-row"><kbd>T</kbd><span>Move to Today</span></div>
+          <div class="kb-row"><kbd>R</kbd><span>Move to Routine</span></div>
+          <div class="kb-row"><kbd>A</kbd><span>Archive / Unarchive</span></div>
+          <div class="kb-row"><kbd>Del</kbd><span>Delete task</span></div>
+        </div>
+        <div class="kb-section">
+          <div class="kb-section-title">General</div>
+          <div class="kb-row"><kbd>T</kbd><span>Toggle theme <em>(when no task focused)</em></span></div>
+          <div class="kb-row"><kbd>C</kbd><span>Copy tasks</span></div>
+          <div class="kb-row"><kbd>Esc</kbd><span>Close / cancel</span></div>
+          <div class="kb-row"><kbd>?</kbd><span>This help</span></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

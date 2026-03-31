@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <!-- ... -->
+            <title> Responsive Website </title>
+            <link rel="icon" type="image/svg+xml" href="images/logo.png" />
+
+        <!-- META -->
+            <meta name="author" content="Arnav Das" />
+            <meta name="description" content="A task management system" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <meta charset="UTF-8" />
+
+        <!-- CSS -->
+            <link href="style.css" rel="stylesheet" type="text/css" />
+
+        <!-- JAVASCRIPT -->
+            <script src="script.js" defer></script>
+    </head>
+    <body>
+
+        <!-- MOBILE -->
+            <div id="mobile">
+                Hi there<br><br>
+
+                As this is just a proof-of-concept (MVP) demonstration, the interface is not fully responsive.<br><br>
+
+                Please view on a larger screen.<br><br>
+            </div>
+
+        <nav>
+            <div>
+                <button class="nav-button" id="button-one-time"   onclick="" > Usr </button>
+                <button class="nav-button" id="button-one-time"   onclick="" > One </button>
+                <button class="nav-button" id="button-routine"    onclick="" > Rou </button>
+                <!-- <button class="nav-button" id="button-month"      onclick="" > Mon </button> -->
+                <button class="nav-button" id="button-today"      onclick="" > Tdy </button>
+                <button class="nav-button" id="button-archive"    onclick="" > Arc </button>
+                <button class="nav-button" id="button-settings"   onclick="" > Set </button>
+            </div>
+            <div>
+                <button class="nav-button" id="button-copy"       onclick="" > Cpy </button>
+                <button class="nav-button" id="button-dark_mode"  onclick="" > Dar </button>
+                <button class="nav-button" id="button-light_mode" onclick="" > Lig </button>
+            </div>
+        </nav>
+        
+        <main>
+            
+            <!-- VIEW-MATRIX -->
+                <div class="view" id="view-matrix">
+                
+                    <ul class="ul-tasks" id="ul-quadrant1">
+                        <!-- <p>Important<br>and Urgent</p> -->
+
+                        <li class="task-container">
+
+                            <div class="row">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </div>
+                                <div class="control-panel">
+                                    <button> T </button>
+                                    <button> R </button>
+                                    <button> A </button>
+                                    <button> E </button>
+                                    <button> X </button>
+                                </div>
+                            </div>
+
+                            <div class="next row description" style="margin-left: calc(1 * var(--global-indent)); width: calc(100% - (1 * var(--global-indent)));">
+                                <div class="deadline"> MMM DD </div>
+                                <div> HH:MM _M </div>
+                            </div>
+
+                        </li>
+
+                        <li class="task-container">
+                            
+                            <div class="row">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Task </div>
+                            </div>
+
+                            <div class="next row description" style="margin-left: calc(1 * var(--global-indent)); width: calc(100% - (1 * var(--global-indent)));">
+                                <div class="deadline"> MMM DD </div>
+                                <div> HH:MM _M </div>
+                                <div class="control-panel">
+                                    <button> T </button>
+                                    <button> R </button>
+                                    <button> A </button>
+                                    <button> E </button>
+                                    <button> X </button>
+                                </div>
+                            </div>
+                            
+                            <div class="seperator"></div>
+                            <div class="next row" style="margin-left: calc(1 * var(--global-indent)); width: calc(100% - (1 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 1 </div>
+                            </div>
+                            <div class="next row" style="margin-left: calc(2 * var(--global-indent)); width: calc(100% - (2 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 2 </div>
+                            </div>
+                            <div class="next row" style="margin-left: calc(3 * var(--global-indent)); width: calc(100% - (3 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 3 </div>
+                            </div>
+                            <div class="next row" style="margin-left: calc(4 * var(--global-indent)); width: calc(100% - (4 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 4 </div>
+                            </div>
+
+                        </li>
+
+                    </ul>
+                    
+                    <ul class="ul-tasks" id="ul-quadrant2">
+                        <!-- <p>Important,<br>but not Urgent</p> -->
+
+                        <li class="task-container">
+
+                            <div class="x">
+
+                                <div class="row a">
+                                    <div> MMM DD </div>
+                                    <div> HH:MM _M </div>
+                                </div>
+
+                                <div class="row b">
+                                    <div class="checkbox"> <input type="checkbox"> </div>
+                                    <div class="task"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </div>
+                                    <div class="control-panel">
+                                        <button> T </button>
+                                        <button> R </button>
+                                        <button> A </button>
+                                        <button> E </button>
+                                        <button> X </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li class="task-container">
+
+                            <div class="x">
+
+                                <div class="row a">
+                                    <div> MMM DD </div>
+                                    <div> HH:MM _M </div>
+                                </div>
+
+                                <div class="row b">
+                                    <div class="checkbox"> <input type="checkbox"> </div>
+                                    <div class="task"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </div>
+                                    <div class="control-panel">
+                                        <button> T </button>
+                                        <button> R </button>
+                                        <button> A </button>
+                                        <button> E </button>
+                                        <button> X </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li class="task-container">
+
+                            <div class="x">
+
+                                <div class="row a">
+                                    <div> MMM DD </div>
+                                    <div> HH:MM _M </div>
+                                </div>
+
+                                <div class="row b">
+                                    <div class="checkbox"> <input type="checkbox"> </div>
+                                    <div class="task"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </div>
+                                    <div class="control-panel">
+                                        <button> T </button>
+                                        <button> R </button>
+                                        <button> A </button>
+                                        <button> E </button>
+                                        <button> X </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li class="task-container">
+
+                            <div class="row a">
+                                <div> MMM DD </div>
+                                <div> HH:MM _M </div>
+                            </div>
+
+                            <div class="next row">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </div>
+                                <div class="control-panel">
+                                    <button> T </button>
+                                    <button> R </button>
+                                    <button> A </button>
+                                    <button> E </button>
+                                    <button> X </button>
+                                </div>
+                            </div>
+
+                            <div class="next row" style="margin-left: calc(1 * var(--global-indent)); width: calc(100% - (1 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 1 </div>
+                            </div>
+                            <div class="next row" style="margin-left: calc(2 * var(--global-indent)); width: calc(100% - (2 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 2 </div>
+                            </div>
+                            <div class="next row" style="margin-left: calc(3 * var(--global-indent)); width: calc(100% - (3 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 3 </div>
+                            </div>
+                            <div class="next row" style="margin-left: calc(4 * var(--global-indent)); width: calc(100% - (4 * var(--global-indent)));">
+                                <div class="checkbox"> <input type="checkbox"> </div>
+                                <div class="task"> Sub 4 </div>
+                            </div>
+
+
+                        </li>
+
+                        <li class="task-container">
+
+                            <div class="x">
+
+                                <div class="row a">
+                                    <div> MMM DD </div>
+                                    <div> HH:MM _M </div>
+                                </div>
+
+                                <div class="row b">
+                                    <div class="checkbox"> <input type="checkbox"> </div>
+                                    <div class="task"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </div>
+                                    <div class="control-panel">
+                                        <button> T </button>
+                                        <button> R </button>
+                                        <button> A </button>
+                                        <button> E </button>
+                                        <button> X </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                        <li class="task-container">
+
+                            <div class="x">
+
+                                <div class="row a">
+                                    <div> MMM DD </div>
+                                    <div> HH:MM _M </div>
+                                </div>
+
+                                <div class="row b">
+                                    <div class="checkbox"> <input type="checkbox"> </div>
+                                    <div class="task"> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </div>
+                                    <div class="control-panel">
+                                        <button> T </button>
+                                        <button> R </button>
+                                        <button> A </button>
+                                        <button> E </button>
+                                        <button> X </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </li>
+
+                    </ul>
+                
+                    <ul class="ul-tasks" id="ul-quadrant3">
+                        <p>Not Important,<br>but Urgent</p>
+                    </ul>
+                
+                    <ul class="ul-tasks" id="ul-quadrant4">
+                        <p>Neither Important,<br>nor Urgent</p>
+                    </ul>
+
+                </div>
+        
+            <!-- VIEW-LIST -->
+                <div class="view" id="view-list">
+        
+                    <ul class="ul-tasks" id="ul-list">
+                    </ul>
+                        
+                </div>
+                
+        
+            <!-- INPUTBAR -->
+                <div id="inputbar">
+                    <input    class="textInput" id="input-task"     type="text"     placeholder="Task"     />
+                    <!--         
+                    <textarea class="textInput" id="input-textarea" name=""         placeholder="Textarea" ></textarea>
+                    <input    class="textInput" id="input-deadline" type="text"     placeholder="Deadline" />
+                    <input    class="textInput" id="input-schedule" type="text"     placeholder="Schedule" />
+                    <input                      id="input-impact"   type="checkbox"                        />
+                    -->
+                </div>
+
+        </main>
+
+    </body>
+</html>

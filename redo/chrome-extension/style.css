@@ -1,0 +1,333 @@
+:root {
+
+    /* Common */
+        --common-font-size: 14px;
+        --common-border-width: 1px;
+        --common-margin: 32px;
+
+    /* Components */
+
+        /* Nav */
+            --nav-button-height-and-width: 48px;
+            --nav-button-margin-top-and-bottom: 4px;
+            --nav-button-margin-left-and-right: 8px;
+
+        /* InputBar */
+            --textInput-height: 48px; /* Same as nav button's height */
+
+        /* Main */
+            --main-width: calc(100vw - (var(--nav-button-height-and-width) + (2 * var(--nav-button-margin-left-and-right)) + var(--common-border-width))); /* Same for #inputBar */
+
+            /* Clock */
+                --clock-height: 48px;
+    
+            /* View-Matrix */
+                --quadrant-gutter: 8px;
+
+
+    /* Color Palette */
+        /*  */
+            --color-primary:         hsl(  0,   0%,   0%);
+            --color-secondary:       hsl(  0,   0%,   5%);
+            --color-tertiary:        hsl(  0,   0%,  10%);
+            --color-quaternary:      hsl(  0,   0%,  15%);
+            --color-border:          hsl(  0,   0%,  25%);
+        /* Font */
+            --color-font-highlight:  hsl(  0,   0%, 100%);
+            --color-font-base:       hsl(  0,   0%,  80%);
+            --color-font-tonedown:   hsl(  0,   0%,  60%);
+        /*  */
+            --color-danger:          hsl(  0, 100%,  25%);
+            --color-warning:         hsl( 60, 100%,  25%);
+            --color-success:         hsl(120, 100%,  25%);
+            --color-info:            hsl(180, 100%,  25%);
+}
+
+/**********************************************************/
+
+/* template {
+    postion: ;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+
+    margin: ;
+    border: ;
+    height: ;
+    width: ;
+    padding: ;
+
+    display: ;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+
+    background-color: ;
+    color: ;
+    text-align: center;
+    align-content: center;
+    outline: ;
+    border-radius: ;
+} */
+
+* {
+    margin: 0;
+    padding: 0;
+
+    font-family: monospace;
+    font-size: var(--common-font-size);
+}
+
+body {
+    margin: 0;
+    overflow: hidden;
+
+    color: var(--color-font-base);
+}
+
+/************************* NAVBAR *************************/
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+
+    border-right: var(--common-border-width) solid var(--color-border);
+    height: 100vh;
+    
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+
+    background-color: var(--color-primary);
+    outline: 1px solid red;
+}
+
+nav > div {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.nav-button {
+    margin: calc(var(--nav-button-margin-left-and-right) / 2) var(--nav-button-margin-left-and-right);
+    border: none;
+    height: var(--nav-button-height-and-width);
+    width: var(--nav-button-height-and-width);
+
+    background-color: var(--color-primary);
+    color: var(--color-font-base);
+    border-radius: 25%;
+}
+
+nav > div:first-child > .nav-button:first-child {
+    margin-top: calc(2 * var(--nav-button-margin-left-and-right));
+}
+
+nav > div:last-child > .nav-button:last-child {
+    margin-bottom: calc(2 * var(--nav-button-margin-left-and-right));
+}
+
+.nav-button:hover:not(.selected_button) {
+    background-color: var(--color-secondary);
+}
+
+/************************ INPUT_BAR ***********************/
+
+#input_bar {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+
+    width: var(--main-width);
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+
+    background-color: var(--color-primary);
+}
+
+.textInput {
+    border: none;
+    margin: calc(var(--common-margin) / 2) var(--common-margin) var(--common-margin);
+    height: (var(--textInput-height));
+    padding: calc((var(--textInput-height) - var(--common-font-size)) / 2) 16px;
+
+    background-color: var(--color-secondary);
+    color: var(--color-font-base);
+    border-radius: calc(var(--textInput-height) / 2);
+}
+
+.textInput:focus {
+    background-color: var(--color-tertiary);
+    /* outline: 2px solid var(--color-info); */
+    outline: none;
+}
+
+#input-task {
+    width: calc(100% - ((2 * var(--common-margin)) + (2 * var(--quadrant-gutter)))); /* Temp */
+}
+
+/************************** MAIN **************************/
+
+main {
+    height: calc(100vh - (var(--textInput-height) + (1.5 * var(--common-margin))));
+    width: var(--main-width);
+
+    position: fixed;
+    top: 0;
+    right: 0;
+    /* overflow: hidden; */
+
+    background-color: var(--color-primary);
+}
+
+/************************** CLOCK *************************
+
+#clock {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+}
+
+#clock > div {
+    margin: var(--common-margin) 0;
+    width: 160px;
+
+    text-align: center;
+    align-content: center;
+}*/
+
+/*********************** VIEW-MATRIX **********************/
+
+.quadrant {
+    height: calc(50% - ((var(--common-margin) / 1.5) + var(--quadrant-gutter)));
+    width: calc(50% - (var(--common-margin) + var(--quadrant-gutter)));
+}
+
+.quadrant:nth-child(1) {
+    margin: var(--common-margin) var(--quadrant-gutter) var(--quadrant-gutter) var(--common-margin);
+}
+
+.quadrant:nth-child(2) {
+    margin: var(--common-margin) var(--common-margin) var(--quadrant-gutter) var(--quadrant-gutter);
+}
+
+.quadrant:nth-child(3) {
+    margin: var(--quadrant-gutter) var(--quadrant-gutter) calc(var(--common-margin) / 2) var(--common-margin);
+}
+
+.quadrant:nth-child(4) {
+    margin: var(--quadrant-gutter) var(--common-margin) calc(var(--common-margin) / 2) var(--quadrant-gutter);
+}
+
+.quadrant > p {
+    height: 100%;
+
+    color: var(--color-font-tonedown);
+    text-align: center;
+    align-content: center;
+}
+
+/************************ VIEW-LIST ***********************/
+
+#list {
+    margin: var(--common-margin) var(--common-margin) var(--common-margin) var(--common-margin);
+    height: calc(100% - (var(--common-margin) * 1.5));
+    width: calc(100% - (var(--common-margin) * 2));
+}
+
+#list > p {
+    height: 100%;
+
+    color: var(--color-font-tonedown);
+    text-align: center;
+    align-content: center;
+}
+
+/************************* COMMON *************************/
+
+.view {
+    height: 100%;
+
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.view > div {
+    background-color: var(--color-secondary);
+    border-radius: 16px;
+}
+
+.ul-tasks {
+    list-style-type:   none;
+}
+
+.task-container {
+    position: relative;
+
+    margin: 0px 16px;
+    /* border: var(--common-border-width) solid var(--color-border); */
+    height: calc(var(--common-font-size) + 16px + 16px);
+
+    display: flex;
+    flex-flow: row nowrap;
+
+    background-color: var(--color-secondary);
+    border-radius: 16px;
+}
+
+.task-container:first-child {
+    margin-top: 16px;
+}
+
+.task-container:last-child {
+    margin-bottom: 16px;
+}
+
+.task-container > div {
+    align-content: center;
+
+    outline: 1px solid red;
+}
+
+.checkbox {
+    margin: 16px;
+}
+
+.deadline {
+    width: 80px;
+}
+
+.schedule {
+    width: 80px;
+}
+
+.task {
+}
+
+.update {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    height: 100%;
+
+    display: none;
+    flex-flow: row nowrap;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.selected {
+    background-color: var(--color-tertiary);
+}
+
+.selected > .update {
+    display: flex;
+}
+
+/************************* COMMON *************************/
+

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <!--TITLE-->
+      <title> My Todo List - Rebuild </title>
+
+    <!--META-->
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--CSS-->
+      <link href="styles.css" rel="stylesheet" type="text/css" />
+
+  </head>
+  <body>
+
+    <!--NAVBAR-->
+      <div id="navbar">
+          <!-- <button class="navbar-buttons" id="gan" onclick=""> GAN </button> -->
+          <!-- <button class="navbar-buttons" id="rou" onclick=""> ROU </button> -->
+          <button class="navbar-buttons selected_button" id="mat" onclick=""> MAT </button>
+          <button class="navbar-buttons" id="tdy" onclick=""> TDY </button>
+          <!-- <button class="navbar-buttons" id="upc" onclick=""> UPC </button> -->
+          <!-- <button class="navbar-buttons" id="cal" onclick=""> CAL </button> -->
+          <!-- <button class="navbar-buttons" id="arc" onclick=""> ARC </button> -->
+          <!-- <button class="navbar-buttons" id="com" onclick=""> COM </button> -->
+          <!-- <button class="navbar-buttons" id="cpy" onclick=""> CPY </button> -->
+          <button class="navbar-buttons" id="dar" onclick=""> DAR </button>
+          <button class="navbar-buttons" id="lig" onclick=""> LIG </button>
+        </div>
+
+      </div>
+
+    <!--CONTAINER-->
+      <div id="container">
+
+        <!--CHART-->
+          <div class="views" style="display: none" id="chart"> 
+
+            <!--GANTT-->
+            <div id="wbs"> WBS </div>
+            
+            <!--CHART-->
+              <div id="timeline"> Timeline </div>
+
+          </div>
+        
+
+        <!--ROUTINE-->
+          <div class="views" style="display: none" id="routine"> routine </div>
+
+        <!--MATRIX-->
+          <div class="views" id="all-tasks">
+
+            <!--MATRIX-CALENDAR-->
+              <div id="matrix-calendar">
+                <div> S 1 </div>
+                <div> M 2 </div>
+                <div> T 3 </div>
+                <div> W 4 </div>
+                <div> T 5 </div>
+                <div class="matrix-calendar-today"> F 6 </div>
+                <div> S 7 </div>
+                <div> S 8 </div>
+                <div> M 9 </div>
+                <div> T 10 </div>
+                <div> W 11 </div>
+                <div> T 12 </div>
+                <div> F 13 </div>
+                <div> S 14 </div>
+              </div>
+            
+            <!--MATRIX-->
+              <div id="matrix">
+                <div class="quadrants" id="quad1"> Quadrant 1 </div>
+                <div class="quadrants" id="quad2"> Quadrant 2 </div>
+                <div class="quadrants" id="quad3"> Quadrant 3 </div>
+                <div class="quadrants" id="quad4"> Quadrant 4 </div>
+              </div>
+            
+          </div>
+
+        <!--TODAY-->
+          <div class="views" style="display: none" id="today"> today </div>
+
+        <!--UPCOMING-->
+          <div class="views" style="display: none" id="upcoming"> upcoming </div>
+
+      </div>
+    
+      <!--INPUTBAR-->
+        <div id="inputBar"> Inputbar </div>
+
+  </body>
+</html>

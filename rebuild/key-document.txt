@@ -1,0 +1,71 @@
+OBJECTIVES
+    1. Help users to set goals, plan how they'll achieve them and track their progress
+        - Set goals
+        - Break them down into tasks
+        - Schedule those tasks
+        - View the every goal, it's action plan, and it's schedule at once
+    2. Help users set a routine, stick to them & track their progress
+        - Set systems (recurring tasks)
+        - Create elastic plan
+        - Set reminders
+        - Track habits
+    3. Help users prioritize their tasks, and plan how they'll do what
+        - View entire workload at once
+          So that nothing slips through the crack
+        - Prioritize tasks
+            - Order them in ascending order of importance, deadline and schedule
+            - Highlight tasks
+                - whose deadline are close or overdue
+                - or that are scheduled for today
+            - Narrow down MITs
+        - Schedule & reschedule more easily
+            - Hour-by-hour
+                - Day
+                - Week
+            - All-day events
+                - Month
+                - Year
+    4. Data entry and manipulation must be as quick as possible
+
+CONSTRAINTS
+    - Keyboard-centric design
+
+OUT-OF-SCOPE
+    - Mobile app
+
+DELIVERABLES
+    1.
+        • Gantt Chart
+            • Add dependencies to easily reschedule
+    2.
+        • Routine planner + Habit Tracker
+            • Schedule recurring tasks: daily, weekly, specific days
+            • Set reminders
+            • Track habits: yes/no, numeric, time-based
+    3.
+        • Eisenhower matrix
+            • Filter tasks scheduled for today from Gantt chart & Routine
+            • 'Automatic prioritizor' to reorder tasks in ascending order of Deadline & Schedule
+        • Today
+            - Screen split horizontally
+                - Left:  vertical scroll of tasks scheduled for today
+                - Right: hour-by-hour day calendar
+            - Can NOT view previous or later days
+            • Set reminders
+            • Share with others
+        • Upcoming
+            - Screen split horizontally
+                - Left:  vertical scroll of tasks scheduled for each day of the week
+                - Right: hour-by-hour week calendar
+            - CAN view previous or later weeks
+            • Set reminders
+            • Share with others
+        • Calendar
+            - All-day events
+            - Month & year calendars
+            • Set reminders
+        • Archive
+    4.
+        • Keyboard-centric design
+        • Shorthands for data entry and manipulation
+        • Shortcuts for everything

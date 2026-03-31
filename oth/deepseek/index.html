@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoalFlow: Gantt + Eisenhower Matrix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 5px;
+            box-shadow: var(--shadow);
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--light-gray);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e11571;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e6890e;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #3ab8db;
+        }
+
+        /* Gantt View Styles */
+        #gantt-view {
+            display: block;
+        }
+
+        .goal-container {
+            margin-bottom: 30px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .goal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .gantt-chart {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .gantt-header {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            min-width: 800px;
+        }
+
+        .gantt-task-header {
+            width: 250px;
+            font-weight: 600;
+        }
+
+        .gantt-timeline {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        .gantt-time-unit {
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .gantt-task {
+            display: flex;
+            margin-bottom: 10px;
+            min-width: 800px;
+        }
+
+        .gantt-task-name {
+            width: 250px;
+            padding: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gantt-task-bars {
+            flex: 1;
+            position: relative;
+            height: 40px;
+        }
+
+        .gantt-task-bar {
+            position: absolute;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gantt-task-bar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .gantt-task-bar.important {
+            background: linear-gradient(135deg, var(--danger), #ff6b9d);
+        }
+
+        .gantt-task-bar.normal {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .gantt-task-bar.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .task-tags {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tag-important {
+            background: #ffebee;
+            color: var(--danger);
+        }
+
+        .tag-deadline {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .tag-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .subtask-list {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .subtask-item {
+            padding: 8px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subtask-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .subtask-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .task-checkbox, .subtask-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Eisenhower Matrix Styles */
+        #eisenhower-view {
+            display: none;
+        }
+
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            height: 600px;
+        }
+
+        .quadrant {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+        }
+
+        .quadrant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .quadrant-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .quadrant-1 {
+            border-top: 4px solid var(--danger);
+        }
+
+        .quadrant-2 {
+            border-top: 4px solid var(--primary);
+        }
+
+        .quadrant-3 {
+            border-top: 4px solid var(--warning);
+        }
+
+        .quadrant-4 {
+            border-top: 4px solid var(--success);
+        }
+
+        .quadrant-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .matrix-task {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: move;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .matrix-task:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .matrix-task.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .matrix-task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .matrix-task-title {
+            font-weight: 600;
+        }
+
+        .matrix-task-goal {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .matrix-task-dates {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 900px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .task-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            padding: 10px;
+        }
+
+        .task-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-item-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .subtask-item-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        .subtask-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .add-subtask-btn {
+            padding: 5px 10px;
+            background: var(--info);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        /* Confirmation Modal */
+        .confirmation-modal .modal-content {
+            max-width: 500px;
+        }
+
+        .confirmation-text {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .matrix-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(4, 1fr);
+                height: auto;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-tasks"></i>
+                <span>GoalFlow</span>
+            </div>
+            <div class="view-toggle">
+                <button class="view-btn active" id="gantt-btn">
+                    <i class="fas fa-chart-gantt"></i> Gantt Charts
+                </button>
+                <button class="view-btn" id="eisenhower-btn">
+                    <i class="fas fa-th-large"></i> Eisenhower Matrix
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Gantt View -->
+            <section id="gantt-view">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">My Goals & Tasks</h2>
+                        <button class="btn btn-primary" id="add-goal-btn">
+                            <i class="fas fa-plus"></i> Add Goal
+                        </button>
+                    </div>
+                    <div id="goals-container">
+                        <!-- Goals will be dynamically added here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Eisenhower Matrix View -->
+            <section id="eisenhower-view">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Eisenhower Matrix</h2>
+                        <div>
+                            <span class="tag tag-important">Important</span>
+                            <span class="tag tag-deadline">Deadline</span>
+                        </div>
+                    </div>
+                    <div class="matrix-container">
+                        <div class="quadrant quadrant-1">
+                            <div class="quadrant-header">
+                                <h3 class="quadrant-title">Do First</h3>
+                                <span class="tag tag-important">Important</span>
+                            </div>
+                            <div class="quadrant-content" id="quadrant-1">
+                                <!-- Important & Deadline tasks will be here -->
+                            </div>
+                        </div>
+                        <div class="quadrant quadrant-2">
+                            <div class="quadrant-header">
+                                <h3 class="quadrant-title">Schedule</h3>
+                                <span class="tag tag-important">Important</span>
+                            </div>
+                            <div class="quadrant-content" id="quadrant-2">
+                                <!-- Important & No Deadline tasks will be here -->
+                            </div>
+                        </div>
+                        <div class="quadrant quadrant-3">
+                            <div class="quadrant-header">
+                                <h3 class="quadrant-title">Delegate</h3>
+                                <span class="tag tag-deadline">Deadline</span>
+                            </div>
+                            <div class="quadrant-content" id="quadrant-3">
+                                <!-- Not Important & Deadline tasks will be here -->
+                            </div>
+                        </div>
+                        <div class="quadrant quadrant-4">
+                            <div class="quadrant-header">
+                                <h3 class="quadrant-title">Don't Do</h3>
+                            </div>
+                            <div class="quadrant-content" id="quadrant-4">
+                                <!-- Not Important & No Deadline tasks will be here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Goal Update Modal -->
+    <div class="modal" id="update-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Goal</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="update-form">
+                <input type="hidden" id="edit-goal-id" value="">
+                
+                <div class="form-group">
+                    <label class="form-label" for="goal-title">Goal Title</label>
+                    <input type="text" class="form-control" id="goal-title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Tasks</label>
+                    <div class="task-list" id="task-list">
+                        <!-- Tasks will be dynamically added here -->
+                    </div>
+                    <button type="button" class="btn btn-outline" id="add-task-btn" style="margin-top: 10px;">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-update">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal confirmation-modal" id="confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="confirmation-text" id="confirmation-text">
+                Are you sure you want to delete this item?
+            </div>
+            <div class="confirmation-actions">
+                <button type="button" class="btn btn-outline" id="cancel-delete">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let goals = [
+            {
+                id: 1,
+                title: "Complete Web Development Project",
+                tasks: [
+                    {
+                        id: 101,
+                        title: "Design UI/UX",
+                        startDate: "2023-06-01",
+                        endDate: "2023-06-07",
+                        deadline: "2023-06-10",
+                        important: true,
+                        completed: false,
+                        subtasks: [
+                            { id: 1001, title: "Create wireframes", completed: false },
+                            { id: 1002, title: "Design mockups", completed: false }
+                        ]
+                    },
+                    {
+                        id: 102,
+                        title: "Implement Frontend",
+                        startDate: "2023-06-08",
+                        endDate: "2023-06-15",
+                        deadline: "2023-06-20",
+                        important: true,
+                        completed: false,
+                        subtasks: [
+                            { id: 1003, title: "Set up project structure", completed: false },
+                            { id: 1004, title: "Create components", completed: false }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "Prepare for Presentation",
+                tasks: [
+                    {
+                        id: 201,
+                        title: "Research Topic",
+                        startDate: "2023-06-05",
+                        endDate: "2023-06-10",
+                        deadline: null,
+                        important: false,
+                        completed: false,
+                        subtasks: [
+                            { id: 2001, title: "Gather sources", completed: false },
+                            { id: 2002, title: "Take notes", completed: false }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // State variables
+        let showTasks = true;
+        let showSubtasks = true;
+        let itemToDelete = null;
+
+        // DOM Elements
+        const ganttView = document.getElementById('gantt-view');
+        const eisenhowerView = document.getElementById('eisenhower-view');
+        const ganttBtn = document.getElementById('gantt-btn');
+        const eisenhowerBtn = document.getElementById('eisenhower-btn');
+        const goalsContainer = document.getElementById('goals-container');
+        const updateModal = document.getElementById('update-modal');
+        const updateForm = document.getElementById('update-form');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const confirmationText = document.getElementById('confirmation-text');
+
+        // Initialize the app
+        function init() {
+            renderGoals();
+            setupEventListeners();
+            setupSortable();
+            updateEisenhowerMatrix();
+        }
+
+        // Render goals in Gantt view
+        function renderGoals() {
+            goalsContainer.innerHTML = '';
+            
+            if (goals.length === 0) {
+                goalsContainer.innerHTML = '<p>No goals yet. Add your first goal!</p>';
+                return;
+            }
+            
+            goals.forEach(goal => {
+                const goalElement = document.createElement('div');
+                goalElement.className = 'goal-container';
+                goalElement.innerHTML = `
+                    <div class="goal-header">
+                        <h3 class="goal-title">${goal.title}</h3>
+                        <div class="goal-actions">
+                            <button class="btn btn-success toggle-tasks-btn">
+                                <i class="fas fa-eye${showTasks ? '' : '-slash'}"></i> Tasks
+                            </button>
+                            <button class="btn btn-success toggle-subtasks-btn">
+                                <i class="fas fa-eye${showSubtasks ? '' : '-slash'}"></i> Subtasks
+                            </button>
+                            <button class="btn btn-warning edit-goal-btn" data-goal-id="${goal.id}">
+                                <i class="fas fa-edit"></i> Update
+                            </button>
+                            <button class="btn btn-danger delete-goal-btn" data-goal-id="${goal.id}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="toggle-buttons">
+                        <button class="btn btn-outline mark-all-tasks-btn" data-goal-id="${goal.id}">
+                            <i class="fas fa-check-double"></i> Mark All Tasks Done
+                        </button>
+                        <button class="btn btn-outline mark-all-subtasks-btn" data-goal-id="${goal.id}">
+                            <i class="fas fa-check-double"></i> Mark All Subtasks Done
+                        </button>
+                    </div>
+                    <div class="gantt-chart" id="gantt-${goal.id}">
+                        ${renderGanttChart(goal)}
+                    </div>
+                `;
+                goalsContainer.appendChild(goalElement);
+            });
+        }
+
+        // Render Gantt chart for a goal
+        function renderGanttChart(goal) {
+            if (!goal.tasks || goal.tasks.length === 0) {
+                return '<p>No tasks yet. Add your first task!</p>';
+            }
+            
+            // Filter tasks based on visibility
+            const visibleTasks = showTasks ? goal.tasks : [];
+            
+            // Calculate date range for the timeline
+            const dateRange = getDateRange(visibleTasks);
+            const days = getDaysInRange(dateRange.start, dateRange.end);
+            
+            let html = `
+                <div class="gantt-header">
+                    <div class="gantt-task-header">Task</div>
+                    <div class="gantt-timeline">
+            `;
+            
+            // Add date headers
+            days.forEach(day => {
+                html += `<div class="gantt-time-unit">${formatDate(day, 'short')}</div>`;
+            });
+            
+            html += `</div></div>`;
+            
+            // Add tasks
+            visibleTasks.forEach(task => {
+                html += renderGanttTask(task, days, dateRange, goal.id);
+                
+                // Add subtasks list (not in Gantt chart)
+                if (showSubtasks && task.subtasks && task.subtasks.length > 0) {
+                    html += `<div class="subtask-list">`;
+                    task.subtasks.forEach(subtask => {
+                        html += `
+                            <div class="subtask-item ${subtask.completed ? 'completed' : ''}">
+                                <div class="subtask-content">
+                                    <input type="checkbox" class="subtask-checkbox" 
+                                           data-goal-id="${goal.id}" data-task-id="${task.id}" data-subtask-id="${subtask.id}"
+                                           ${subtask.completed ? 'checked' : ''}>
+                                    <span>${subtask.title}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+            });
+            
+            return html;
+        }
+
+        // Render a task in the Gantt chart
+        function renderGanttTask(task, days, dateRange, goalId) {
+            const startOffset = daysFromStart(dateRange.start, task.startDate);
+            const duration = daysBetween(task.startDate, task.endDate);
+            const barWidth = (duration / days.length) * 100;
+            const barLeft = (startOffset / days.length) * 100;
+            
+            return `
+                <div class="gantt-task">
+                    <div class="gantt-task-name">
+                        <input type="checkbox" class="task-checkbox" 
+                               data-goal-id="${goalId}" data-task-id="${task.id}"
+                               ${task.completed ? 'checked' : ''}>
+                        <div>
+                            <div>${task.title}</div>
+                            <div class="task-tags">
+                                ${task.important ? '<span class="tag tag-important">Important</span>' : ''}
+                                ${task.deadline ? '<span class="tag tag-deadline">Deadline: ' + formatDate(task.deadline) + '</span>' : ''}
+                                ${task.completed ? '<span class="tag tag-completed">Completed</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gantt-task-bars">
+                        <div class="gantt-task-bar ${task.important ? 'important' : 'normal'} ${task.completed ? 'completed' : ''}" 
+                             style="left: ${barLeft}%; width: ${barWidth}%;">
+                            ${task.title}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Calculate date range from tasks
+        function getDateRange(tasks) {
+            if (!tasks || tasks.length === 0) return { start: new Date(), end: new Date() };
+            
+            let start = new Date(tasks[0].startDate);
+            let end = new Date(tasks[0].endDate);
+            
+            tasks.forEach(task => {
+                const taskStart = new Date(task.startDate);
+                const taskEnd = new Date(task.endDate);
+                
+                if (taskStart < start) start = taskStart;
+                if (taskEnd > end) end = taskEnd;
+            });
+            
+            return { start, end };
+        }
+
+        // Get all days in a date range
+        function getDaysInRange(start, end) {
+            const days = [];
+            const current = new Date(start);
+            
+            while (current <= end) {
+                days.push(new Date(current));
+                current.setDate(current.getDate() + 1);
+            }
+            
+            return days;
+        }
+
+        // Calculate days between two dates
+        function daysBetween(start, end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            const diffTime = Math.abs(endDate - startDate);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        }
+
+        // Calculate days from start date
+        function daysFromStart(start, date) {
+            const startDate = new Date(start);
+            const targetDate = new Date(date);
+            const diffTime = Math.abs(targetDate - startDate);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        // Format date for display
+        function formatDate(dateString, format = 'default') {
+            if (!dateString) return 'No date';
+            const date = new Date(dateString);
+            
+            if (format === 'short') {
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+            
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // View toggle
+            ganttBtn.addEventListener('click', () => {
+                ganttView.style.display = 'block';
+                eisenhowerView.style.display = 'none';
+                ganttBtn.classList.add('active');
+                eisenhowerBtn.classList.remove('active');
+            });
+
+            eisenhowerBtn.addEventListener('click', () => {
+                ganttView.style.display = 'none';
+                eisenhowerView.style.display = 'block';
+                eisenhowerBtn.classList.add('active');
+                ganttBtn.classList.remove('active');
+                updateEisenhowerMatrix();
+            });
+
+            // Add goal button
+            document.getElementById('add-goal-btn').addEventListener('click', () => {
+                showUpdateModal();
+            });
+
+            // Close modals
+            document.querySelectorAll('.close-modal, #cancel-update, #cancel-delete').forEach(button => {
+                button.addEventListener('click', () => {
+                    updateModal.style.display = 'none';
+                    confirmationModal.style.display = 'none';
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === updateModal) updateModal.style.display = 'none';
+                if (e.target === confirmationModal) confirmationModal.style.display = 'none';
+            });
+
+            // Form submission
+            updateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveGoalUpdate();
+                updateModal.style.display = 'none';
+            });
+
+            // Delete confirmation
+            document.getElementById('confirm-delete').addEventListener('click', () => {
+                deleteItem();
+                confirmationModal.style.display = 'none';
+            });
+
+            // Add task button in update modal
+            document.getElementById('add-task-btn').addEventListener('click', () => {
+                addTaskToUpdateForm();
+            });
+
+            // Delegated event listeners
+            goalsContainer.addEventListener('click', (e) => {
+                // Toggle tasks visibility
+                if (e.target.closest('.toggle-tasks-btn')) {
+                    showTasks = !showTasks;
+                    renderGoals();
+                }
+                
+                // Toggle subtasks visibility
+                if (e.target.closest('.toggle-subtasks-btn')) {
+                    showSubtasks = !showSubtasks;
+                    renderGoals();
+                }
+                
+                // Edit goal buttons
+                if (e.target.closest('.edit-goal-btn')) {
+                    const goalId = parseInt(e.target.closest('.edit-goal-btn').dataset.goalId);
+                    showUpdateModal(goalId);
+                }
+                
+                // Delete goal buttons
+                if (e.target.closest('.delete-goal-btn')) {
+                    const goalId = parseInt(e.target.closest('.delete-goal-btn').dataset.goalId);
+                    const goal = goals.find(g => g.id === goalId);
+                    showDeleteConfirmation('goal', goalId, goal.title);
+                }
+                
+                // Mark all tasks done
+                if (e.target.closest('.mark-all-tasks-btn')) {
+                    const goalId = parseInt(e.target.closest('.mark-all-tasks-btn').dataset.goalId);
+                    markAllTasksDone(goalId);
+                }
+                
+                // Mark all subtasks done
+                if (e.target.closest('.mark-all-subtasks-btn')) {
+                    const goalId = parseInt(e.target.closest('.mark-all-subtasks-btn').dataset.goalId);
+                    markAllSubtasksDone(goalId);
+                }
+                
+                // Task checkboxes
+                if (e.target.classList.contains('task-checkbox')) {
+                    const goalId = parseInt(e.target.dataset.goalId);
+                    const taskId = parseInt(e.target.dataset.taskId);
+                    toggleTaskCompletion(goalId, taskId, e.target.checked);
+                }
+                
+                // Subtask checkboxes
+                if (e.target.classList.contains('subtask-checkbox')) {
+                    const goalId = parseInt(e.target.dataset.goalId);
+                    const taskId = parseInt(e.target.dataset.taskId);
+                    const subtaskId = parseInt(e.target.dataset.subtaskId);
+                    toggleSubtaskCompletion(goalId, taskId, subtaskId, e.target.checked);
+                }
+            });
+        }
+
+        // Show update modal
+        function showUpdateModal(goalId = null) {
+            // Reset form
+            updateForm.reset();
+            document.getElementById('edit-goal-id').value = goalId || '';
+            
+            // Populate form based on whether we're creating or editing
+            if (goalId) {
+                // Editing existing goal
+                const goal = goals.find(g => g.id === goalId);
+                if (goal) {
+                    document.getElementById('goal-title').value = goal.title;
+                    renderTaskList(goal.tasks);
+                }
+            } else {
+                // Creating new goal
+                document.getElementById('goal-title').value = '';
+                document.getElementById('task-list').innerHTML = '';
+            }
+            
+            // Show modal
+            updateModal.style.display = 'flex';
+        }
+
+        // Render task list in update modal
+        function renderTaskList(tasks) {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+            
+            if (!tasks || tasks.length === 0) {
+                taskList.innerHTML = '<p>No tasks yet. Add your first task!</p>';
+                return;
+            }
+            
+            tasks.forEach(task => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.innerHTML = `
+                    <div class="task-item-header">
+                        <input type="text" class="form-control task-title" value="${task.title}" placeholder="Task title">
+                        <button type="button" class="btn btn-danger delete-task-btn" data-task-id="${task.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="task-item-content">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control task-start" value="${task.startDate}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control task-end" value="${task.endDate}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Deadline (Optional)</label>
+                            <input type="date" class="form-control task-deadline" value="${task.deadline || ''}">
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox task-important" id="task-important-${task.id}" ${task.important ? 'checked' : ''}>
+                            <label class="form-label" for="task-important-${task.id}">Important Task</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="checkbox task-completed" id="task-completed-${task.id}" ${task.completed ? 'checked' : ''}>
+                            <label class="form-label" for="task-completed-${task.id}">Completed</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subtasks</label>
+                            <div class="subtask-list">
+                                ${renderSubtasksInput(task.subtasks, task.id)}
+                            </div>
+                            <button type="button" class="add-subtask-btn" data-task-id="${task.id}">
+                                <i class="fas fa-plus"></i> Add Subtask
+                            </button>
+                        </div>
+                    </div>
+                `;
+                taskList.appendChild(taskItem);
+            });
+            
+            // Add event listeners for dynamically added elements
+            document.querySelectorAll('.delete-task-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const taskId = parseInt(e.target.closest('.delete-task-btn').dataset.taskId);
+                    deleteTaskFromUpdateForm(taskId);
+                });
+            });
+            
+            document.querySelectorAll('.add-subtask-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const taskId = parseInt(e.target.closest('.add-subtask-btn').dataset.taskId);
+                    addSubtaskToUpdateForm(taskId);
+                });
+            });
+        }
+
+        // Render subtasks input in update modal
+        function renderSubtasksInput(subtasks, taskId) {
+            if (!subtasks || subtasks.length === 0) {
+                return '<p>No subtasks yet.</p>';
+            }
+            
+            let html = '';
+            subtasks.forEach(subtask => {
+                html += `
+                    <div class="subtask-item-input">
+                        <input type="text" class="subtask-input" value="${subtask.title}" placeholder="Subtask title">
+                        <input type="checkbox" class="checkbox subtask-completed" ${subtask.completed ? 'checked' : ''}>
+                        <button type="button" class="btn btn-danger delete-subtask-btn" data-subtask-id="${subtask.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            return html;
+        }
+
+        // Add task to update form
+        function addTaskToUpdateForm() {
+            const taskList = document.getElementById('task-list');
+            const newTaskId = Date.now();
+            
+            const taskItem = document.createElement('div');
+            taskItem.className = 'task-item';
+            taskItem.innerHTML = `
+                <div class="task-item-header">
+                    <input type="text" class="form-control task-title" placeholder="Task title">
+                    <button type="button" class="btn btn-danger delete-task-btn" data-task-id="${newTaskId}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="task-item-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-control task-start">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-control task-end">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deadline (Optional)</label>
+                        <input type="date" class="form-control task-deadline">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox task-important" id="task-important-${newTaskId}">
+                        <label class="form-label" for="task-important-${newTaskId}">Important Task</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" class="checkbox task-completed" id="task-completed-${newTaskId}">
+                        <label class="form-label" for="task-completed-${newTaskId}">Completed</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subtasks</label>
+                        <div class="subtask-list">
+                            <p>No subtasks yet.</p>
+                        </div>
+                        <button type="button" class="add-subtask-btn" data-task-id="${newTaskId}">
+                            <i class="fas fa-plus"></i> Add Subtask
+                        </button>
+                    </div>
+                </div>
+            `;
+            taskList.appendChild(taskItem);
+            
+            // Add event listener for the new delete button
+            taskItem.querySelector('.delete-task-btn').addEventListener('click', (e) => {
+                deleteTaskFromUpdateForm(newTaskId);
+            });
+            
+            // Add event listener for the new add subtask button
+            taskItem.querySelector('.add-subtask-btn').addEventListener('click', (e) => {
+                addSubtaskToUpdateForm(newTaskId);
+            });
+        }
+
+        // Add subtask to update form
+        function addSubtaskToUpdateForm(taskId) {
+            const taskItem = document.querySelector(`[data-task-id="${taskId}"]`).closest('.task-item');
+            const subtaskList = taskItem.querySelector('.subtask-list');
+            
+            // Remove "No subtasks yet" message if present
+            if (subtaskList.querySelector('p')) {
+                subtaskList.innerHTML = '';
+            }
+            
+            const subtaskId = Date.now();
+            const subtaskItem = document.createElement('div');
+            subtaskItem.className = 'subtask-item-input';
+            subtaskItem.innerHTML = `
+                <input type="text" class="subtask-input" placeholder="Subtask title">
+                <input type="checkbox" class="checkbox subtask-completed">
+                <button type="button" class="btn btn-danger delete-subtask-btn" data-subtask-id="${subtaskId}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            subtaskList.appendChild(subtaskItem);
+            
+            // Add event listener for the new delete button
+            subtaskItem.querySelector('.delete-subtask-btn').addEventListener('click', (e) => {
+                subtaskItem.remove();
+            });
+        }
+
+        // Delete task from update form
+        function deleteTaskFromUpdateForm(taskId) {
+            const taskItem = document.querySelector(`[data-task-id="${taskId}"]`).closest('.task-item');
+            taskItem.remove();
+        }
+
+        // Save goal update
+        function saveGoalUpdate() {
+            const goalId = document.getElementById('edit-goal-id').value;
+            const title = document.getElementById('goal-title').value;
+            
+            // Collect tasks data
+            const tasks = [];
+            document.querySelectorAll('.task-item').forEach(taskItem => {
+                const title = taskItem.querySelector('.task-title').value;
+                const startDate = taskItem.querySelector('.task-start').value;
+                const endDate = taskItem.querySelector('.task-end').value;
+                const deadline = taskItem.querySelector('.task-deadline').value || null;
+                const important = taskItem.querySelector('.task-important').checked;
+                const completed = taskItem.querySelector('.task-completed').checked;
+                
+                // Collect subtasks
+                const subtasks = [];
+                taskItem.querySelectorAll('.subtask-item-input').forEach(subtaskItem => {
+                    const subtaskTitle = subtaskItem.querySelector('.subtask-input').value;
+                    const subtaskCompleted = subtaskItem.querySelector('.subtask-completed').checked;
+                    
+                    if (subtaskTitle.trim() !== '') {
+                        subtasks.push({
+                            id: Date.now() + Math.random(),
+                            title: subtaskTitle,
+                            completed: subtaskCompleted
+                        });
+                    }
+                });
+                
+                if (title.trim() !== '') {
+                    tasks.push({
+                        id: Date.now() + Math.random(),
+                        title,
+                        startDate,
+                        endDate,
+                        deadline,
+                        important,
+                        completed,
+                        subtasks
+                    });
+                }
+            });
+            
+            if (goalId) {
+                // Update existing goal
+                updateGoal(parseInt(goalId), title, tasks);
+            } else {
+                // Create new goal
+                addGoal(title, tasks);
+            }
+        }
+
+        // Show delete confirmation modal
+        function showDeleteConfirmation(type, id, title) {
+            itemToDelete = { type, id, title };
+            
+            let message = `Are you sure you want to delete "${title}"?`;
+            if (type === 'goal') {
+                message += " This will also delete all tasks and subtasks under this goal.";
+            }
+            
+            confirmationText.textContent = message;
+            confirmationModal.style.display = 'flex';
+        }
+
+        // Delete item
+        function deleteItem() {
+            if (!itemToDelete) return;
+            
+            const { type, id } = itemToDelete;
+            
+            if (type === 'goal') {
+                // Delete goal
+                goals = goals.filter(g => g.id !== id);
+            }
+            
+            // Reset and update UI
+            itemToDelete = null;
+            renderGoals();
+            updateEisenhowerMatrix();
+        }
+
+        // Setup sortable drag and drop
+        function setupSortable() {
+            // Make Eisenhower matrix quadrants sortable
+            for (let i = 1; i <= 4; i++) {
+                const quadrant = document.getElementById(`quadrant-${i}`);
+                if (quadrant) {
+                    new Sortable(quadrant, {
+                        group: `quadrant-${i}`,
+                        animation: 150,
+                        ghostClass: 'sortable-ghost',
+                        onEnd: function(evt) {
+                            // Note: In a real app, you might want to update task importance/deadline
+                            // based on quadrant movement. For this demo, we're just allowing reordering.
+                        }
+                    });
+                }
+            }
+        }
+
+        // Add a new goal
+        function addGoal(title, tasks = []) {
+            const newGoal = {
+                id: Date.now(),
+                title: title,
+                tasks: tasks
+            };
+            goals.push(newGoal);
+            renderGoals();
+            updateEisenhowerMatrix();
+            return newGoal;
+        }
+
+        // Update a goal
+        function updateGoal(goalId, title, tasks) {
+            const goal = goals.find(g => g.id === goalId);
+            if (goal) {
+                goal.title = title;
+                goal.tasks = tasks;
+                renderGoals();
+                updateEisenhowerMatrix();
+            }
+        }
+
+        // Toggle task completion
+        function toggleTaskCompletion(goalId, taskId, completed) {
+            const goal = goals.find(g => g.id === goalId);
+            if (goal) {
+                const task = goal.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = completed;
+                    renderGoals();
+                    updateEisenhowerMatrix();
+                }
+            }
+        }
+
+        // Toggle subtask completion
+        function toggleSubtaskCompletion(goalId, taskId, subtaskId, completed) {
+            const goal = goals.find(g => g.id === goalId);
+            if (goal) {
+                const task = goal.tasks.find(t => t.id === taskId);
+                if (task) {
+                    const subtask = task.subtasks.find(s => s.id === subtaskId);
+                    if (subtask) {
+                        subtask.completed = completed;
+                        renderGoals();
+                    }
+                }
+            }
+        }
+
+        // Mark all tasks as done for a goal
+        function markAllTasksDone(goalId) {
+            const goal = goals.find(g => g.id === goalId);
+            if (goal) {
+                goal.tasks.forEach(task => {
+                    task.completed = true;
+                });
+                renderGoals();
+                updateEisenhowerMatrix();
+            }
+        }
+
+        // Mark all subtasks as done for a goal
+        function markAllSubtasksDone(goalId) {
+            const goal = goals.find(g => g.id === goalId);
+            if (goal) {
+                goal.tasks.forEach(task => {
+                    if (task.subtasks) {
+                        task.subtasks.forEach(subtask => {
+                            subtask.completed = true;
+                        });
+                    }
+                });
+                renderGoals();
+            }
+        }
+
+        // Update Eisenhower Matrix view
+        function updateEisenhowerMatrix() {
+            // Clear all quadrants
+            for (let i = 1; i <= 4; i++) {
+                const quadrant = document.getElementById(`quadrant-${i}`);
+                if (quadrant) quadrant.innerHTML = '';
+            }
+
+            // Categorize tasks into quadrants
+            goals.forEach(goal => {
+                goal.tasks.forEach(task => {
+                    const quadrant = getTaskQuadrant(task);
+                    const taskElement = createMatrixTaskElement(task, goal.title);
+                    const quadrantEl = document.getElementById(`quadrant-${quadrant}`);
+                    if (quadrantEl) {
+                        quadrantEl.appendChild(taskElement);
+                    }
+                });
+            });
+        }
+
+        // Determine which quadrant a task belongs to
+        function getTaskQuadrant(task) {
+            if (task.important && task.deadline) {
+                return 1; // Do First: Important & Deadline
+            } else if (task.important && !task.deadline) {
+                return 2; // Schedule: Important & No Deadline
+            } else if (!task.important && task.deadline) {
+                return 3; // Delegate: Not Important & Deadline
+            } else {
+                return 4; // Don't Do: Not Important & No Deadline
+            }
+        }
+
+        // Create task element for Eisenhower matrix
+        function createMatrixTaskElement(task, goalTitle) {
+            const taskElement = document.createElement('div');
+            taskElement.className = `matrix-task ${task.completed ? 'completed' : ''}`;
+            taskElement.setAttribute('data-task-id', task.id);
+            
+            taskElement.innerHTML = `
+                <div class="matrix-task-header">
+                    <span class="matrix-task-title">${task.title}</span>
+                    <div class="task-tags">
+                        ${task.important ? '<span class="tag tag-important">Important</span>' : ''}
+                        ${task.deadline ? '<span class="tag tag-deadline">Deadline</span>' : ''}
+                        ${task.completed ? '<span class="tag tag-completed">Completed</span>' : ''}
+                    </div>
+                </div>
+                <div class="matrix-task-goal">${goalTitle}</div>
+                <div class="matrix-task-dates">
+                    ${formatDate(task.startDate)} - ${formatDate(task.endDate)}
+                    ${task.deadline ? ` | Deadline: ${formatDate(task.deadline)}` : ''}
+                </div>
+            `;
+            
+            return taskElement;
+        }
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>

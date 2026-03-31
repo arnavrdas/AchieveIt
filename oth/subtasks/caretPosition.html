@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Task Manager</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        
+        header {
+            background: #4a6fc0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            color: #ecf0f1;
+        }
+        
+        .editor-container {
+            display: flex;
+            height: 250px;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .line-numbers {
+            width: 50px;
+            padding: 10px 5px 10px 10px;
+            background-color: #f5f7fa;
+            text-align: right;
+            font-family: monospace;
+            line-height: 1.6;
+            color: #7f8c8d;
+            overflow: hidden;
+            user-select: none;
+            border-right: 1px solid #e0e6ed;
+            font-size: 14px;
+        }
+        
+        #taskInput {
+            width: calc(100% - 50px);
+            height: 100%;
+            padding: 10px;
+            border: none;
+            resize: none;
+            background-color: white;
+            font-family: monospace;
+            line-height: 1.6;
+            font-size: 14px;
+            outline: none;
+            tab-size: 4;
+            -moz-tab-size: 4;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            font-family: monospace;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-label {
+            font-weight: bold;
+            margin-right: 5px;
+            color: #ecf0f1;
+        }
+        
+        .instructions {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .instructions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .instructions li:before {
+            content: "•";
+            color: #4a6fc0;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            position: absolute;
+            left: 0;
+        }
+        
+        .level-0 { color: #2c3e50; font-weight: 600; }
+        .level-1 { color: #3498db; margin-left: 20px; }
+        .level-2 { color: #2ecc71; margin-left: 40px; }
+        .level-3 { color: #e74c3c; margin-left: 60px; }
+        .level-4 { color: #9b59b6; margin-left: 80px; }
+        
+        .key {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.1);
+            margin: 0 3px;
+        }
+        
+        footer {
+            margin-top: 20px;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .output-container {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .output-container h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        #taskOutput {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            min-height: 100px;
+            border: 1px solid #eee;
+        }
+        
+        #taskOutput ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        
+        #taskOutput li {
+            margin: 8px 0;
+            padding: 5px;
+            border-left: 3px solid #4a6fc0;
+            padding-left: 10px;
+        }
+        
+        .level-0-output { font-weight: 600; color: #2c3e50; }
+        .level-1-output { margin-left: 20px; color: #3498db; }
+        .level-2-output { margin-left: 40px; color: #2ecc71; }
+        .level-3-output { margin-left: 60px; color: #e74c3c; }
+        .level-4-output { margin-left: 80px; color: #9b59b6; }
+        
+        .keyboard-nav {
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff8e1;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .keyboard-nav h4 {
+            margin: 0 0 8px 0;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Enhanced Task Manager</h1>
+        <p class="subtitle">Fixed backspace behavior with proper indentation handling</p>
+    </header>
+    
+    <div class="container">
+        <div class="editor-container">
+            <div class="line-numbers" id="lineNumbers">1</div>
+            <textarea id="taskInput" placeholder="Enter your main task here..."></textarea>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">Line:</span>
+                <span id="linePosition">1</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Level:</span>
+                <span id="levelIndicator">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="errorMessage" class="error-message">
+        Error: Invalid indentation. You can only indent one level deeper than the previous line.
+    </div>
+    
+    <div class="output-container">
+        <h3>Task Output</h3>
+        <div id="taskOutput">
+            <p>Your task hierarchy will appear here...</p>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h3>How to Use</h3>
+        <ul>
+            <li>Type your main task on the first line (Level 0)</li>
+            <li>All other tasks must be subtasks (Level 1-4)</li>
+            <li>Press <span class="key">Enter</span> to create a new task</li>
+            <li>Press <span class="key">Tab</span> to indent a task (create a subtask)</li>
+            <li>Press <span class="key">Shift</span> + <span class="key">Tab</span> to outdent a task</li>
+            <li>Tasks can be nested up to 4 levels</li>
+            <li>First letter of each task is automatically capitalized</li>
+            <li class="level-0">Level 0: Main task (only one allowed)</li>
+            <li class="level-1">Level 1: Subtasks</li>
+            <li class="level-2">Level 2: Sub-subtasks</li>
+            <li class="level-3">Level 3: Deep subtasks</li>
+            <li class="level-4">Level 4: Deepest subtasks</li>
+        </ul>
+        
+        <div class="keyboard-nav">
+            <h4>Enhanced Editing</h4>
+            <p><span class="key">Backspace</span> at indentation: Remove line if empty, otherwise prevent deletion</p>
+            <p><span class="key">Delete</span> at line end: Remove empty line below, otherwise prevent newline deletion</p>
+            <p><span class="key">Shift+Tab</span>: Smart outdenting that adjusts the entire hierarchy</p>
+            <p><span class="key">↑</span> / <span class="key">↓</span>: Move to end of line above/below</p>
+            <p><span class="key">←</span> / <span class="key">→</span>: Skip indentation areas</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Created with ❤️ | Press Tab to indent, Shift+Tab to outdent</p>
+    </footer>
+
+    <script>
+        const taskInput = document.getElementById('taskInput');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const linePosition = document.getElementById('linePosition');
+        const levelIndicator = document.getElementById('levelIndicator');
+        const errorMessage = document.getElementById('errorMessage');
+        const taskOutput = document.getElementById('taskOutput');
+
+        // Initialize line numbers
+        updateLineNumbers();
+
+        // Add event listeners
+        taskInput.addEventListener('input', updateAll);
+        taskInput.addEventListener('click', updateAll);
+        taskInput.addEventListener('keyup', updateAll);
+        taskInput.addEventListener('scroll', syncScroll);
+        taskInput.addEventListener('keydown', handleKeys);
+        taskInput.addEventListener('blur', capitalizeFirstLetters);
+
+        function updateAll() {
+            updateCaretPosition();
+            updateLineNumbers();
+            updateLevelIndicator();
+            validateStructure();
+            renderOutput();
+        }
+
+        function updateCaretPosition() {
+            const caretPos = taskInput.selectionStart;
+            const textBeforeCaret = taskInput.value.substring(0, caretPos);
+            
+            // Calculate line number
+            const lineNumber = textBeforeCaret.split('\n').length;
+            
+            // Update display
+            linePosition.textContent = lineNumber;
+        }
+
+        function updateLineNumbers() {
+            const lineCount = taskInput.value.split('\n').length;
+            let numbersText = '';
+            
+            for (let i = 1; i <= lineCount; i++) {
+                numbersText += i + '<br>';
+            }
+            
+            // Always show at least one line number
+            if (lineCount === 0) {
+                numbersText = '1';
+            }
+            
+            lineNumbers.innerHTML = numbersText;
+            
+            // Sync the scroll position
+            syncScroll();
+        }
+
+        function updateLevelIndicator() {
+            const caretPos = taskInput.selectionStart;
+            const textBeforeCaret = taskInput.value.substring(0, caretPos);
+            const currentLineStart = textBeforeCaret.lastIndexOf('\n') + 1;
+            const currentLineText = taskInput.value.substring(currentLineStart, caretPos);
+            
+            // Count leading tabs or spaces (4 spaces = 1 indent level)
+            const indentMatch = currentLineText.match(/^(\t|    )*/);
+            const indentLevel = indentMatch ? indentMatch[0].replace(/    /g, '\t').length : 0;
+            
+            levelIndicator.textContent = Math.min(indentLevel, 4);
+        }
+
+        function syncScroll() {
+            lineNumbers.scrollTop = taskInput.scrollTop;
+        }
+
+        function validateStructure() {
+            const lines = taskInput.value.split('\n');
+            let hasError = false;
+            
+            // Check if any line after the first has no indentation
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim() !== '' && !lines[i].startsWith('\t') && !lines[i].startsWith('    ')) {
+                    hasError = true;
+                    break;
+                }
+            }
+            
+            // Check if indentation is more than +1 of previous line
+            let previousIndent = 0;
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                const indentMatch = lines[i].match(/^(\t|    )*/);
+                const currentIndent = indentMatch ? indentMatch[0].replace(/    /g, '\t').length : 0;
+                
+                if (i > 0 && currentIndent > previousIndent + 1) {
+                    hasError = true;
+                    break;
+                }
+                
+                previousIndent = currentIndent;
+            }
+            
+            // Show or hide error message
+            errorMessage.style.display = hasError ? 'block' : 'none';
+            
+            return !hasError;
+        }
+
+        function renderOutput() {
+            const lines = taskInput.value.split('\n');
+            
+            if (lines.length === 1 && lines[0].trim() === '') {
+                taskOutput.innerHTML = '<p>Your task hierarchy will appear here...</p>';
+                return;
+            }
+            
+            let outputHtml = '<ul>';
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                // Count indentation level
+                const indentMatch = lines[i].match(/^(\t|    )*/);
+                const indentLevel = indentMatch ? indentMatch[0].replace(/    /g, '\t').length : 0;
+                
+                // Get task text without indentation
+                const taskText = lines[i].replace(/^(\t|    )*/, '');
+                
+                if (taskText.trim() !== '') {
+                    outputHtml += `<li class="level-${indentLevel}-output">${taskText}</li>`;
+                }
+            }
+            
+            outputHtml += '</ul>';
+            taskOutput.innerHTML = outputHtml;
+        }
+
+        function capitalizeFirstLetters() {
+            const lines = taskInput.value.split('\n');
+            let changed = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                // Get indentation
+                const indentMatch = lines[i].match(/^(\t|    )*/);
+                const indent = indentMatch ? indentMatch[0] : '';
+                
+                // Get task text without indentation
+                let taskText = lines[i].replace(/^(\t|    )*/, '');
+                
+                // Capitalize first letter if needed
+                if (taskText.length > 0 && taskText[0] !== taskText[0].toUpperCase()) {
+                    taskText = taskText.charAt(0).toUpperCase() + taskText.slice(1);
+                    lines[i] = indent + taskText;
+                    changed = true;
+                }
+            }
+            
+            if (changed) {
+                taskInput.value = lines.join('\n');
+                updateAll();
+            }
+        }
+
+        function handleKeys(e) {
+            // Handle Backspace and Delete keys
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                handleDeletion(e);
+                return;
+            }
+            
+            // Handle Tab and Enter keys for indentation
+            if (e.key === 'Tab') {
+                handleIndentation(e);
+                return;
+            } else if (e.key === 'Enter') {
+                handleNewLine(e);
+                return;
+            }
+            
+            // Handle arrow keys for navigation
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                
+                const cursorPos = taskInput.selectionStart;
+                const value = taskInput.value;
+                
+                if (e.key === 'ArrowUp') {
+                    // Move to end of line above
+                    const currentLineStart = value.lastIndexOf('\n', cursorPos - 1) + 1;
+                    
+                    if (currentLineStart > 0) {
+                        // Find previous line
+                        const prevLineEnd = currentLineStart - 1;
+                        const prevLineStart = value.lastIndexOf('\n', prevLineEnd - 1) + 1;
+                        const prevLine = value.substring(prevLineStart, prevLineEnd);
+                        
+                        // Move cursor to end of previous line
+                        const newCursorPos = prevLineStart + prevLine.length;
+                        taskInput.setSelectionRange(newCursorPos, newCursorPos);
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    // Move to end of line below
+                    const currentLineEnd = value.indexOf('\n', cursorPos);
+                    
+                    if (currentLineEnd !== -1) {
+                        // Find next line
+                        const nextLineStart = currentLineEnd + 1;
+                        const nextLineEnd = value.indexOf('\n', nextLineStart);
+                        const nextLine = value.substring(nextLineStart, nextLineEnd === -1 ? value.length : nextLineEnd);
+                        
+                        // Move cursor to end of next line
+                        const newCursorPos = nextLineStart + nextLine.length;
+                        taskInput.setSelectionRange(newCursorPos, newCursorPos);
+                    }
+                } else if (e.key === 'ArrowLeft') {
+                    // Get current line info
+                    const currentLineStart = value.lastIndexOf('\n', cursorPos - 1) + 1;
+                    const currentLineText = value.substring(currentLineStart, cursorPos);
+                    
+                    // Check if we're at the beginning of the text (after indentation)
+                    const indentMatch = currentLineText.match(/^(\t|    )*/);
+                    const indentLength = indentMatch ? indentMatch[0].length : 0;
+                    const textStartPos = currentLineStart + indentLength;
+                    
+                    if (cursorPos > textStartPos) {
+                        // Move left normally
+                        taskInput.setSelectionRange(cursorPos - 1, cursorPos - 1);
+                    } else if (cursorPos > 0) {
+                        // We're at the beginning of text, move to end of line above
+                        const prevLineEnd = currentLineStart - 1;
+                        if (prevLineEnd >= 0) {
+                            const prevLineStart = value.lastIndexOf('\n', prevLineEnd - 1) + 1;
+                            const prevLine = value.substring(prevLineStart, prevLineEnd);
+                            const newCursorPos = prevLineStart + prevLine.length;
+                            taskInput.setSelectionRange(newCursorPos, newCursorPos);
+                        }
+                    }
+                } else if (e.key === 'ArrowRight') {
+                    // Get current line info
+                    const currentLineStart = value.lastIndexOf('\n', cursorPos - 1) + 1;
+                    const currentLineEnd = value.indexOf('\n', cursorPos);
+                    const currentLine = value.substring(currentLineStart, currentLineEnd === -1 ? value.length : currentLineEnd);
+                    
+                    // Check if we're at the end of the current line
+                    if (cursorPos === currentLineStart + currentLine.length) {
+                        // At end of line, move to start of next line (after indentation)
+                        if (currentLineEnd !== -1) {
+                            const nextLineStart = currentLineEnd + 1;
+                            const nextLineEnd = value.indexOf('\n', nextLineStart);
+                            const nextLine = value.substring(nextLineStart, nextLineEnd === -1 ? value.length : nextLineEnd);
+                            
+                            // Find the start of text in next line (after indentation)
+                            const indentMatch = nextLine.match(/^(\t|    )*/);
+                            const indentLength = indentMatch ? indentMatch[0].length : 0;
+                            const textStartPos = nextLineStart + indentLength;
+                            
+                            taskInput.setSelectionRange(textStartPos, textStartPos);
+                        }
+                    } else {
+                        // Not at end of line, check if we're in indentation area
+                        const currentLineText = value.substring(currentLineStart, cursorPos);
+                        const indentMatch = currentLineText.match(/^(\t|    )*/);
+                        const indentLength = indentMatch ? indentMatch[0].length : 0;
+                        const textStartPos = currentLineStart + indentLength;
+                        
+                        if (cursorPos < textStartPos) {
+                            // We're in indentation area, jump to start of text
+                            taskInput.setSelectionRange(textStartPos, textStartPos);
+                        } else {
+                            // Move right normally
+                            taskInput.setSelectionRange(cursorPos + 1, cursorPos + 1);
+                        }
+                    }
+                }
+                
+                updateAll();
+            }
+        }
+
+        function handleDeletion(e) {
+            const cursorPos = taskInput.selectionStart;
+            const value = taskInput.value;
+            
+            if (e.key === 'Backspace') {
+                // Handle Backspace key
+                if (cursorPos === 0) return; // At beginning of text
+                
+                // Get current line info
+                const currentLineStart = value.lastIndexOf('\n', cursorPos - 1) + 1;
+                const currentLineEnd = value.indexOf('\n', cursorPos);
+                const currentLine = value.substring(currentLineStart, currentLineEnd === -1 ? value.length : currentLineEnd);
+                
+                // Check if we're at the beginning of the text (after indentation)
+                const currentLineText = value.substring(currentLineStart, cursorPos);
+                const indentMatch = currentLineText.match(/^(\t|    )*/);
+                const indentLength = indentMatch ? indentMatch[0].length : 0;
+                const textStartPos = currentLineStart + indentLength;
+                
+                if (cursorPos === textStartPos && indentLength > 0) {
+                    // At beginning of text but after indentation - prevent deleting indentation
+                    e.preventDefault();
+                } else if (cursorPos === currentLineStart && currentLineStart > 0) {
+                    // At beginning of line (including indentation)
+                    const prevLineEnd = currentLineStart - 1;
+                    const prevLineStart = value.lastIndexOf('\n', prevLineEnd - 1) + 1;
+                    const prevLine = value.substring(prevLineStart, prevLineEnd);
+                    
+                    if (prevLine.trim() === '') {
+                        // Previous line is empty, remove it
+                        e.preventDefault();
+                        const newValue = value.substring(0, prevLineStart) + value.substring(currentLineStart);
+                        taskInput.value = newValue;
+                        taskInput.setSelectionRange(prevLineStart, prevLineStart);
+                    }
+                } else if (cursorPos <= textStartPos) {
+                    // We're in the indentation area but not at the very beginning
+                    // Prevent deleting indentation
+                    e.preventDefault();
+                }
+                // Else allow normal backspace behavior
+            } else if (e.key === 'Delete') {
+                // Handle Delete key
+                if (cursorPos === value.length) return; // At end of text
+                
+                // Get current line info
+                const currentLineStart = value.lastIndexOf('\n', cursorPos - 1) + 1;
+                const currentLineEnd = value.indexOf('\n', cursorPos);
+                const currentLine = value.substring(currentLineStart, currentLineEnd === -1 ? value.length : currentLineEnd);
+                
+                // Check if we're at the end of the current line
+                if (cursorPos === currentLineStart + currentLine.length) {
+                    // At end of line
+                    if (currentLineEnd !== -1) {
+                        const nextLineStart = currentLineEnd + 1;
+                        const nextLineEnd = value.indexOf('\n', nextLineStart);
+                        const nextLine = value.substring(nextLineStart, nextLineEnd === -1 ? value.length : nextLineEnd);
+                        
+                        if (nextLine.trim() === '') {
+                            // Next line is empty, remove it
+                            e.preventDefault();
+                            const newValue = value.substring(0, currentLineEnd) + value.substring(nextLineEnd === -1 ? value.length : nextLineEnd);
+                            taskInput.value = newValue;
+                            taskInput.setSelectionRange(cursorPos, cursorPos);
+                        } else {
+                            // Next line is not empty, prevent deleting the newline
+                            e.preventDefault();
+                        }
+                    }
+                }
+                // Else allow normal delete behavior
+            }
+            
+            updateAll();
+        }
+
+        function handleIndentation(e) {
+            e.preventDefault();
+            
+            const startPos = taskInput.selectionStart;
+            const endPos = taskInput.selectionEnd;
+            const value = taskInput.value;
+            
+            // Get current line
+            const currentLineStart = value.lastIndexOf('\n', startPos - 1) + 1;
+            const currentLineEnd = value.indexOf('\n', startPos);
+            const currentLine = value.substring(currentLineStart, currentLineEnd === -1 ? value.length : currentLineEnd);
+            
+            // Get current line number
+            const textBeforeCaret = value.substring(0, startPos);
+            const lineNumber = textBeforeCaret.split('\n').length;
+            
+            if (e.shiftKey) {
+                // Handle Shift+Tab (outdent)
+                if (currentLine.startsWith('\t') || currentLine.startsWith('    ')) {
+                    // Don't allow outdenting if it would make line 0 for non-first lines
+                    if (lineNumber > 1) {
+                        const newIndentLevel = (currentLine.match(/^(\t|    )*/)[0].replace(/    /g, '\t').length) - 1;
+                        
+                        if (newIndentLevel >= 1 || lineNumber === 1) {
+                            // Store the original cursor position relative to the line start
+                            const originalCursorPosInLine = startPos - currentLineStart;
+                            
+                            // Remove one level of indentation
+                            const newValue = value.substring(0, currentLineStart) + 
+                                            currentLine.replace(/^(\t|    )/, '') + 
+                                            value.substring(currentLineEnd === -1 ? value.length : currentLineEnd);
+                            
+                            taskInput.value = newValue;
+                            
+                            // Calculate new cursor position (adjust for removed indentation)
+                            const indentRemoved = currentLine.startsWith('\t') ? 1 : 4;
+                            const newCursorPos = Math.max(currentLineStart + originalCursorPosInLine - indentRemoved, currentLineStart);
+                            
+                            // Set cursor position
+                            taskInput.setSelectionRange(newCursorPos, newCursorPos);
+                            
+                            // Check if this creates an invalid structure and adjust if needed
+                            setTimeout(() => {
+                                if (!validateStructure()) {
+                                    adjustHierarchyAfterOutdent(lineNumber - 1, newCursorPos); // lineNumber is 1-indexed
+                                }
+                            }, 10);
+                        }
+                    }
+                }
+            } else {
+                // Handle Tab (indent)
+                // Don't allow indenting the first line
+                if (lineNumber > 1) {
+                    const indentMatch = currentLine.match(/^(\t|    )*/);
+                    const currentIndent = indentMatch ? indentMatch[0].replace(/    /g, '\t').length : 0;
+                    
+                    // Get previous line's indentation
+                    const prevLineStart = value.lastIndexOf('\n', currentLineStart - 2) + 1;
+                    const prevLineEnd = currentLineStart - 1;
+                    const prevLine = value.substring(prevLineStart, prevLineEnd);
+                    const prevIndentMatch = prevLine.match(/^(\t|    )*/);
+                    const prevIndent = prevIndentMatch ? prevIndentMatch[0].replace(/    /g, '\t').length : 0;
+                    
+                    // Only allow indenting one level more than previous line
+                    if (currentIndent < 4 && currentIndent <= prevIndent) {
+                        // Store the original cursor position relative to the line start
+                        const originalCursorPosInLine = startPos - currentLineStart;
+                        
+                        // Add indentation
+                        const newValue = value.substring(0, currentLineStart) + 
+                                        '\t' + currentLine + 
+                                        value.substring(currentLineEnd === -1 ? value.length : currentLineEnd);
+                        
+                        taskInput.value = newValue;
+                        
+                        // Set cursor position (adjust for added indentation)
+                        const newCursorPos = currentLineStart + originalCursorPosInLine + 1;
+                        taskInput.setSelectionRange(newCursorPos, newCursorPos);
+                    }
+                }
+            }
+            
+            updateAll();
+        }
+
+        function adjustHierarchyAfterOutdent(lineIndex, originalCursorPos) {
+            const lines = taskInput.value.split('\n');
+            const outdentedLine = lines[lineIndex];
+            
+            // Get the new indentation level of the outdented line
+            const indentMatch = outdentedLine.match(/^(\t|    )*/);
+            const newIndentLevel = indentMatch ? indentMatch[0].replace(/    /g, '\t').length : 0;
+            
+            // Adjust all subsequent lines that were indented more than the new level
+            for (let i = lineIndex + 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') continue;
+                
+                const lineIndentMatch = lines[i].match(/^(\t|    )*/);
+                const lineIndentLevel = lineIndentMatch ? lineIndentMatch[0].replace(/    /g, '\t').length : 0;
+                
+                if (lineIndentLevel > newIndentLevel) {
+                    // This line was a child of the outdented line, reduce its indentation
+                    const newIndent = '\t'.repeat(lineIndentLevel - 1);
+                    lines[i] = newIndent + lines[i].replace(/^(\t|    )*/, '');
+                } else {
+                    // This line is not a child, stop processing
+                    break;
+                }
+            }
+            
+            // Update the textarea
+            taskInput.value = lines.join('\n');
+            
+            // Restore the cursor position to where it was before adjustment
+            taskInput.setSelectionRange(originalCursorPos, originalCursorPos);
+            
+            updateAll();
+        }
+
+        function handleNewLine(e) {
+            e.preventDefault();
+            
+            const startPos = taskInput.selectionStart;
+            const value = taskInput.value;
+            
+            // Get current line up to cursor
+            const currentLineStart = value.lastIndexOf('\n', startPos - 1) + 1;
+            const currentLineText = value.substring(currentLineStart, startPos);
+            
+            // Get indentation of current line
+            const indentMatch = currentLineText.match(/^(\t|    )*/);
+            let currentIndent = indentMatch ? indentMatch[0] : '';
+            
+            // For lines after the first, ensure at least one level of indentation
+            const textBeforeCaret = value.substring(0, startPos);
+            const lineNumber = textBeforeCaret.split('\n').length;
+            
+            if (lineNumber >= 1 && currentIndent === '') {
+                currentIndent = '\t'; // Add one indentation level for new subtasks
+            }
+            
+            // Insert newline with same indentation
+            const newValue = value.substring(0, startPos) + '\n' + currentIndent + value.substring(startPos);
+            taskInput.value = newValue;
+            
+            // Set cursor position
+            const newCursorPos = startPos + 1 + currentIndent.length;
+            taskInput.setSelectionRange(newCursorPos, newCursorPos);
+            
+            updateAll();
+        }
+
+        // Initialize with example content
+        taskInput.value = "My Project Task\n\tResearch Phase\n\t\tIdentify resources\n\t\tGather materials\n\tDesign Phase\n\t\tCreate mockups\n\t\t\tGet feedback\n\tImplementation\n\t\tWrite code\n\t\tTest functionality";
+        updateAll();
+    </script>
+</body>
+</html>

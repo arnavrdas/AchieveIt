@@ -1,0 +1,442 @@
+/****************************************/
+
+/* 
+ 1 = 0.0625
+ 2 = 0.125
+ 4 = 0.25
+ 6 = 0.375
+ 8 = 0.5
+10 = 0.625
+12 = 0.75
+14 = 0.875
+16 = 1
+*/
+
+:root {
+
+    /* Common */
+        --global-border-width: 1px;
+        --global-spacing: 0.5rem;
+        --global-font-size: 0.875rem;
+        --global-line-height: 1.5;
+        --global-div-dimension: calc(var(--global-font-size) * var(--global-line-height));
+        --global-indent: calc(var(--global-div-dimension) + var(--global-spacing));
+
+    /* Color Palette */
+        /*  */
+            --color-primary:         hsl(  0,   0%,   0%);
+            --color-secondary:       hsl(  0,   0%,  10%);
+            --color-tertiary:        hsl(  0,   0%,   5%);
+            --color-quaternary:      hsl(  0,   0%,  15%);
+            --color-border:          hsl(  0,   0%,  25%);
+        /* Font */
+            --color-font-highlight:  hsl(  0,   0%, 100%);
+            --color-font-base:       hsl(  0,   0%,  80%);
+            --color-font-tonedown:   hsl(  0,   0%,  60%);
+        /*  */
+            --color-danger:          hsl(  0, 100%,  50%);
+            --color-warning:         hsl( 60, 100%,  50%);
+            --color-success:         hsl(120, 100%,  50%);
+            --color-info:            hsl(180, 100%,  50%);
+
+    /* Components */
+
+        /* Nav */
+            --nav-height: calc(var(--nav-button-height-and-width) + (2 * var(--nav-button-margin-top-and-bottom)));
+
+            /* Nav-Button */
+                --nav-button-height-and-width: 3rem;
+                --nav-button-margin-top-and-bottom: 0.5rem;
+
+        /* Main */
+
+            /* Tasks */
+                --description-width: calc(var(--global-font-size) * 5);
+
+            /* InputBar */
+                --inputbar-height: calc(var(--textInput-height) + (var(--global-spacing) * 2));
+                --textInput-height: 3rem; /* Same as nav button's height */
+}
+
+/**************** GLOBAL ****************/
+
+/* template {
+    postion: ;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+
+    margin: ;
+    border: ;
+    height: ;
+    width: ;
+    padding: ;
+
+    display: ;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+
+    background-color: ;
+    color: ;
+    text-align: center;
+    align-content: center;
+    outline: ;
+    border-radius: ;
+} */
+
+* {
+    overflow: hidden;
+
+    margin: 0;
+    padding: 0;
+
+    font-family: monospace;
+    font-size: var(--global-font-size);
+    line-height: var(--global-line-height);
+}
+
+body {
+    overflow: hidden;
+
+    height: 100vh;
+    width: 100vw;
+
+    background-color: var(--color-primary);
+}
+
+/**************** MOBILE ****************/
+
+#mobile {
+    height: 100vh;
+
+    padding: calc(6 * var(--global-spacing));
+
+    color: var(--color-font-base);
+    text-align: center;
+    align-content: center;
+}
+
+/***************** NAV ******************/
+
+nav {
+    height: var(--nav-height);
+
+    display: none;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+
+    outline: 1px solid var(--color-border);
+}
+
+.nav-button {
+    margin: var(--nav-button-margin-top-and-bottom) 0;
+    border: none;
+    height: var(--nav-button-height-and-width);
+    width: var(--nav-button-height-and-width);
+
+    background-color: var(--color-primary);
+    color: var(--color-font-base);
+    border-radius: 25%;
+}
+
+.nav-button:hover:not(.selected_button) {
+    background-color: var(--color-secondary);
+}
+
+/***************** MAIN *****************/
+
+main {
+    display: none;
+    height: calc(100vh - var(--nav-height));
+    padding: var(--global-spacing);
+}
+
+.view {
+    padding: var(--global-spacing);
+    height: calc(100% - (var(--inputbar-height) + (var(--global-spacing) * 4)));
+}
+
+#view-matrix {
+    /* display: none; */
+    display: grid;
+    gap: var(--global-spacing);
+    grid-template-columns: calc(50% - (var(--global-spacing) / 2)) calc(50% - (var(--global-spacing) / 2));
+    grid-template-rows: calc(50% - (var(--global-spacing) / 2)) calc(50% - (var(--global-spacing) / 2));
+
+}
+
+#view-list {
+    display: none;
+}
+
+.ul-tasks {
+    border-radius: var(--global-spacing);
+    height: 100%;
+
+    background-color: var(--color-secondary);
+    outline: 1px solid var(--color-border);
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+.ul-tasks::-webkit-scrollbar { /* Safari and Chrome */
+  width: 0;
+  height: 0;
+  display: none; 
+}
+
+.ul-tasks > p {
+    height: 100%;
+
+    color: var(--color-font-tonedown);
+    text-align: center;
+    align-content: center;
+}
+
+/**************** TASKS *****************/
+
+.task-container {
+    padding: var(--global-spacing);
+
+    color: var(--color-font-base);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.task-container:hover {
+    background-color: var(--color-tertiary);
+}
+
+.task-container:hover > .row >  .control-panel {
+    background-color: var(--color-tertiary);
+    box-shadow: 0 0 1.5em 3em var(--color-tertiary);
+    visibility: visible;
+}
+
+.row {
+    position: relative; /* For .control-panel */
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: start;
+
+    width: 100%;
+}
+
+.checkbox {
+    margin-right: var(--global-spacing);
+    height: var(--global-div-dimension);
+    width: var(--global-div-dimension);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.checkbox > input {
+    height: var(--global-font-size);
+    width: var(--global-font-size);
+}
+
+.task {
+    max-height: calc(var(--global-div-dimension) * 3);
+    width: 100%;
+}
+
+.next {
+    margin-top: var(--global-spacing);
+}
+
+.description {
+    height: var(--global-div-dimension);
+    width: var(--description-width);
+
+    /* border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--global-spacing); */
+
+    display: flex;
+    overflow: hidden;
+}
+
+.description > :not(.control-panel) {
+    margin-right: var(--global-spacing);
+    height: var(--global-div-dimension);
+    width: var(--description-width);
+
+    overflow: hidden;
+}
+
+.deadline {
+    color: var(--color-danger);
+}
+
+.seperator {
+    margin: var(--global-spacing) 0 0 var(--global-indent);
+    border-top: 1px solid var(--color-border);
+    width: calc(100% - var(--global-indent))
+}
+
+.control-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    
+    height: 100%;
+
+    align-content: center;
+    visibility: hidden;
+}
+
+.control-panel > button {
+    border: 1px solid var(--color-border);
+    height: var(--global-div-dimension);
+    width: var(--global-div-dimension);
+
+    background-color: var(--color-secondary);
+    color: var(--color-font-base);
+    border-radius: 100%;
+}
+
+.control-panel > button:hover {
+    background-color: var(--color-font-base);
+    color: var(--color-tertiary);
+}
+
+.x {
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.a {
+    display: flex;
+    flex-flow: row nowrap;
+
+    width: calc((2 * var(--description-width)) + var(--global-spacing));
+}
+
+.a > div {
+    margin-right: var(--global-spacing);
+    height: var(--global-div-dimension);
+    width: var(--description-width);
+
+    overflow: hidden;
+}
+
+.b {
+    width: calc(100% - ((2 * var(--description-width)) + var(--global-spacing)));
+}
+
+/*************** SUBTASKS ***************/
+
+/*************** INPUTBAR ***************/
+
+#inputbar {
+    height: var(--inputbar-height);
+
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+
+}
+
+.textInput {
+    border: none;
+    margin: var(--global-spacing);
+    height: (var(--textInput-height));
+    padding: calc((var(--textInput-height) - var(--global-font-size)) / 2) 1rem;
+
+    background-color: var(--color-secondary);
+    color: var(--color-font-base);
+    border-radius: calc(var(--textInput-height) / 2);
+}
+
+.textInput:focus {
+    background-color: var(--color-tertiary);
+    outline: 1px solid var(--color-info);
+    /* outline: none; */
+}
+
+#input-task {
+    width: 100%;
+}
+
+/****************************************/
+
+/* Mobile-first: Small -> Big */
+
+@media (min-width: 30em) {
+
+    #mobile {
+        display: none;
+    }
+
+    nav {
+        display: flex;
+    }
+    
+    main {
+        display: block;
+    }
+
+}
+
+
+@media (min-width: 60em) {
+
+    :root {
+
+        /* Common */
+            --global-spacing: 1rem;
+    }
+}
+
+
+@media (min-width: 90em) {
+
+    :root {
+
+        /* Nav */
+            --nav-width: calc(var(--nav-button-height-and-width) + (2 * var(--nav-button-margin-left-and-right)));
+
+            /* Nav Button */
+                --nav-button-margin-left-and-right: 0.5rem;
+    }
+
+    body {
+        display: flex;
+        flex-flow: row nowrap;
+    }
+
+    /* Nav */
+
+    nav {
+        height: 100vh;
+        width: var(--nav-width);
+
+        display: flex;
+        flex-flow: column nowrap;
+        justify-content: start;
+    }
+
+    .nav-button {
+        margin: var(--nav-button-margin-top-and-bottom) var(--nav-button-margin-left-and-right);
+    }
+
+    /* Main */
+
+    main {
+        height: 100vh;
+        width: calc(100vw - var(--nav-width));
+    }
+
+}
+
+/************* TEMP OUTLINE *************/
+
+/* .view, #inputbar    { outline: 1px solid white  } */
+/* .x                  { outline: 1px solid blue   } */
+/* .row                { outline: 1px solid red    } */
+/* .next               { outline: 1px solid blue   } */
+/* .description        { outline: 1px solid green  } */
+/* .row > div          { outline: 1px solid green  } */
+/* .checkbox, .task    { outline: 1px solid green  } */

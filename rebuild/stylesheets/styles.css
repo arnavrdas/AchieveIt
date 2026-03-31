@@ -1,0 +1,132 @@
+/************************** ROOT **************************/
+
+:root {
+
+    /* BOX MODEL:  Height, Width, Padding, Border, Margin */
+
+    --navbar-width: 40px;
+    --subContainer-height: calc(100vh - var(--inputBar-height));
+    --gantt-width: 30%;
+    --matrixCalendar-height: 40px;
+
+    --inputBar-height: 40px;
+}
+
+/************************** BODY **************************/
+
+body {
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+
+    display: flex;
+    flex-flow: row nowrap;
+    overflow: hidden;
+}
+
+/************************* NAVBAR *************************/
+
+#navbar {
+    width: var(--navbar-width);
+
+    outline: 1px solid red;
+    overflow: hidden;
+}
+
+/************************ CONTAINER ***********************/
+
+#container {
+    width: calc(100% - var(--navbar-width));
+    overflow: hidden;
+}
+
+#subContainer {
+    height: var(--subContainer-height);
+
+    display: flex;
+    flex-flow: row wrap;
+    overflow: hidden;
+}
+
+/*********************** GANNT CHART **********************/
+
+#gantt {
+    width: var(--gantt-width);
+
+    outline: 1px solid blue;
+}
+
+#chart {
+    width: calc(100% - var(--gantt-width));
+
+    outline: 1px solid blue;
+}
+
+/************************* MATRIX *************************/
+
+#matrixCalendar {
+    width: 100%;
+
+    display: flex;
+    flex-flow: row wrap;
+    overflow: hidden;
+}
+
+#matrixCalendar > div {
+    height: var(--matrixCalendar-height);
+    width: calc(100% / 7);
+
+    outline: 1px solid green;
+}
+
+#matrix {
+    height: calc(var(--subContainer-height) - (var(--matrixCalendar-height) * 2));
+    width: 100%;
+
+    display: flex;
+    flex-flow: row wrap;
+
+    outline: 1px solid blue;
+}
+
+#matrix > div {
+    height: 50%;
+    width: 50%;
+
+    outline: 1px solid blue;
+}
+
+/*********************** SPLITSCREEN **********************/
+
+#tasksSplit {
+    width: 50%;
+
+    outline: 1px solid blue;
+}
+
+#calendarSplit {
+    width: 50%;
+
+    display: flex;
+    flex-flow: column wrap;
+    overflow: hidden;
+    outline: 1px solid blue;
+}
+
+#calendarSplit > div {
+    
+    
+    outline: 1px solid green;
+}
+
+/************************ INPUTBAR ************************/
+
+#inputBar {
+    height: var(--inputBar-height);
+    width: 100%;
+
+    position: fixed;
+    bottom: 0;
+
+    outline: 1px solid red;
+}
