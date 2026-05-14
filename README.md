@@ -1,11 +1,24 @@
-# ACHVIT
+![Status](https://img.shields.io/badge/Status-Stable-darkgreen)
+![Status](https://img.shields.io/badge/Maintenance-Actively_Developing-darkgreen)
 
-Tired of slow personal project management apps? <br>
-Use **AchvIt** to manage your tasks at lighting speed!
+<div align="center">
 
+  # AchieveIt
+  A simple task planner. <br>
+  Made using vanilla JS & localstorage.
+
+</div>
+<br>
+
+## ✅ Features Implemented
+- Eisenhower matrix
+<br>
+
+## 🔜 Coming Next
 - Gantt chart
 - Routine planner
 - Habit tracker
-- Eisenhower matrix
-- Integrated calendar
+- Calendar integrated
 - Notes
+- Responsive UI
+- PWA
