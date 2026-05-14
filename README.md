@@ -1,5 +1,5 @@
 ![Status](https://img.shields.io/badge/Status-Stable-darkgreen)
-![Status](https://img.shields.io/badge/Maintenance-Actively_Developing-darkgreen)
+![Status](https://img.shields.io/badge/Maintenance-Active-darkgreen)
 
 <div align="center">
 
@@ -10,11 +10,11 @@
 </div>
 <br>
 
-## ✅ Features Implemented
+## Features
 - Eisenhower matrix
 <br>
 
-## 🔜 Coming Next
+## Coming Next
 - Gantt chart
 - Routine planner
 - Habit tracker
